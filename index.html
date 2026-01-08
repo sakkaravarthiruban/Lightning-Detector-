@@ -7,21 +7,21 @@
 
 <style>
 :root{
-  --bg-main:#020617;
-  --bg-card:#020617;
-  --bg-header:#0f172a;
-  --line:#1e293b;
-  --blue:#38bdf8;
-  --red:#ef4444;
-  --green:#22c55e;
-  --text-soft:#cbd5f5;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --line:#e2e8f0;
+  --primary:#2563eb;
+  --danger:#dc2626;
+  --success:#16a34a;
+  --text:#0f172a;
+  --muted:#64748b;
 }
 
 body{
   margin:0;
   font-family: "Segoe UI", Arial, sans-serif;
-  background: radial-gradient(circle at top, #0f172a, #020617);
-  color:white;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .container{
@@ -32,78 +32,83 @@ body{
 
 h1{
   text-align:center;
-  color:var(--blue);
-  margin-bottom:40px;
-  letter-spacing:1px;
+  color:var(--primary);
+  margin-bottom:35px;
+  font-weight:600;
 }
 
-/* ===== CARD ===== */
 .card{
-  background: linear-gradient(180deg,#020617,#020617);
+  background:var(--card);
   border-radius:14px;
   padding:25px;
-  box-shadow:
-    0 0 25px rgba(56,189,248,0.15),
-    inset 0 0 20px rgba(56,189,248,0.05);
   border:1px solid var(--line);
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+  margin-bottom:30px;
 }
 
-/* ===== FAULT COUNT ===== */
-.count{
-  font-size:54px;
+/* ===== STAT ===== */
+.stat{
   text-align:center;
-  color:var(--red);
-  text-shadow:0 0 15px rgba(239,68,68,0.7);
+}
+
+.stat h2{
+  margin-bottom:10px;
+  color:var(--muted);
+  font-weight:500;
+}
+
+.count{
+  font-size:56px;
+  font-weight:700;
+  color:var(--danger);
 }
 
 /* ===== TABLE ===== */
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:20px;
+  margin-top:15px;
 }
 
 thead{
-  background:linear-gradient(90deg,#0f172a,#020617);
+  background:#f1f5f9;
 }
 
 th{
   padding:14px;
-  border-bottom:1px solid var(--line);
-  color:var(--blue);
-  font-size:16px;
+  font-weight:600;
+  color:#334155;
+  border-bottom:2px solid var(--line);
 }
 
 td{
   padding:14px;
   border-bottom:1px solid var(--line);
-  color:var(--text-soft);
   text-align:center;
+  color:#334155;
 }
 
 tbody tr:hover{
-  background:rgba(56,189,248,0.05);
+  background:#f8fafc;
 }
 
 /* ===== STATUS BADGE ===== */
-.status{
+.badge{
   padding:6px 14px;
   border-radius:20px;
   font-size:14px;
   font-weight:600;
 }
 
-.tripped{
-  background:rgba(239,68,68,0.15);
-  color:#fecaca;
-  box-shadow:0 0 8px rgba(239,68,68,0.4);
+.badge-danger{
+  background:#fee2e2;
+  color:#991b1b;
 }
 
-/* ===== FOOTER ===== */
 footer{
   text-align:center;
   margin-top:40px;
-  color:#94a3b8;
+  color:var(--muted);
   font-size:14px;
 }
 </style>
@@ -113,15 +118,15 @@ footer{
 
 <div class="container">
 
-  <h1>⚡ High Voltage Safety System</h1>
+  <h1>⚡ High Voltage Safety Monitoring System</h1>
 
-  <div class="card">
+  <!-- ===== TOTAL FAULT COUNT ===== -->
+  <div class="card stat">
     <h2>Total Fault Count</h2>
     <div class="count" id="faultCount">0</div>
   </div>
 
-  <br>
-
+  <!-- ===== FAULT LOG TABLE ===== -->
   <div class="card">
     <h2>Fault Log History</h2>
     <table>
@@ -138,7 +143,7 @@ footer{
   </div>
 
   <footer>
-    ESP32 High Voltage Protection System • Firebase Realtime Monitoring
+    ESP32-Based HV Protection System • Firebase Realtime Dashboard
   </footer>
 
 </div>
@@ -155,24 +160,28 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+/* ===== TOTAL FAULT COUNT ===== */
 onValue(ref(db,"FaultLogs/totalFaults"), snap=>{
-  document.getElementById("faultCount").innerText = snap.exists()?snap.val():0;
+  document.getElementById("faultCount").innerText =
+    snap.exists() ? snap.val() : 0;
 });
 
+/* ===== FAULT LOGS ===== */
 onValue(ref(db,"FaultLogs"), snap=>{
   const table = document.getElementById("faultTable");
   table.innerHTML="";
   let i=1;
+
   snap.forEach(child=>{
     if(child.key.startsWith("fault_")){
-      const d=child.val();
-      table.innerHTML+=`
-      <tr>
-        <td>${i++}</td>
-        <td>${d.time}</td>
-        <td>${d.reason}</td>
-        <td><span class="status tripped">${d.status}</span></td>
-      </tr>`;
+      const d = child.val();
+      table.innerHTML += `
+        <tr>
+          <td>${i++}</td>
+          <td>${d.time}</td>
+          <td>${d.reason}</td>
+          <td><span class="badge badge-danger">${d.status}</span></td>
+        </tr>`;
     }
   });
 });
