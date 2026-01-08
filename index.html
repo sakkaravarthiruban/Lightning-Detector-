@@ -1,142 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>HV Safety Monitoring Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>HV Safety Monitoring Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0f172a;
-      color: #ffffff;
-    }
+<style>
+:root{
+  --bg-main:#020617;
+  --bg-card:#020617;
+  --bg-header:#0f172a;
+  --line:#1e293b;
+  --blue:#38bdf8;
+  --red:#ef4444;
+  --green:#22c55e;
+  --text-soft:#cbd5f5;
+}
 
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 20px;
-    }
+body{
+  margin:0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color:white;
+}
 
-    h1 {
-      text-align: center;
-      color: #38bdf8;
-      margin-bottom: 30px;
-    }
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:30px;
+}
 
-    .card {
-      background: #020617;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(56,189,248,0.5);
-      margin-bottom: 30px;
-    }
+h1{
+  text-align:center;
+  color:var(--blue);
+  margin-bottom:40px;
+  letter-spacing:1px;
+}
 
-    .count {
-      font-size: 50px;
-      color: #ef4444;
-      text-align: center;
-    }
+/* ===== CARD ===== */
+.card{
+  background: linear-gradient(180deg,#020617,#020617);
+  border-radius:14px;
+  padding:25px;
+  box-shadow:
+    0 0 25px rgba(56,189,248,0.15),
+    inset 0 0 20px rgba(56,189,248,0.05);
+  border:1px solid var(--line);
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
+/* ===== FAULT COUNT ===== */
+.count{
+  font-size:54px;
+  text-align:center;
+  color:var(--red);
+  text-shadow:0 0 15px rgba(239,68,68,0.7);
+}
 
-    th, td {
-      padding: 10px;
-      border: 1px solid #334155;
-      text-align: center;
-    }
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
 
-    th {
-      background: #1e293b;
-    }
+thead{
+  background:linear-gradient(90deg,#0f172a,#020617);
+}
 
-    tr:nth-child(even) {
-      background: #020617;
-    }
+th{
+  padding:14px;
+  border-bottom:1px solid var(--line);
+  color:var(--blue);
+  font-size:16px;
+}
 
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      color: #94a3b8;
-      font-size: 14px;
-    }
-  </style>
+td{
+  padding:14px;
+  border-bottom:1px solid var(--line);
+  color:var(--text-soft);
+  text-align:center;
+}
+
+tbody tr:hover{
+  background:rgba(56,189,248,0.05);
+}
+
+/* ===== STATUS BADGE ===== */
+.status{
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:14px;
+  font-weight:600;
+}
+
+.tripped{
+  background:rgba(239,68,68,0.15);
+  color:#fecaca;
+  box-shadow:0 0 8px rgba(239,68,68,0.4);
+}
+
+/* ===== FOOTER ===== */
+footer{
+  text-align:center;
+  margin-top:40px;
+  color:#94a3b8;
+  font-size:14px;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h1>⚡ High Voltage Safety System</h1>
+<div class="container">
 
-    <div class="card">
-      <h2>Total Fault Count</h2>
-      <div class="count" id="faultCount">0</div>
-    </div>
+  <h1>⚡ High Voltage Safety System</h1>
 
-    <div class="card">
-      <h2>Fault Log History</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Time</th>
-            <th>Reason</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="faultTable"></tbody>
-      </table>
-    </div>
-
-    <footer>
-      ESP32 HV Safety System | Firebase Realtime Monitoring
-    </footer>
+  <div class="card">
+    <h2>Total Fault Count</h2>
+    <div class="count" id="faultCount">0</div>
   </div>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+  <br>
 
-    const firebaseConfig = {
-      databaseURL: "https://lightning-detection-aaa-default-rtdb.asia-southeast1.firebasedatabase.app/"
-    };
+  <div class="card">
+    <h2>Fault Log History</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Time</th>
+          <th>Reason</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="faultTable"></tbody>
+    </table>
+  </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+  <footer>
+    ESP32 High Voltage Protection System • Firebase Realtime Monitoring
+  </footer>
 
-    const totalFaultRef = ref(db, "FaultLogs/totalFaults");
-    const faultLogsRef = ref(db, "FaultLogs");
+</div>
 
-    onValue(totalFaultRef, (snapshot) => {
-      document.getElementById("faultCount").innerText =
-        snapshot.exists() ? snapshot.val() : 0;
-    });
+<!-- ===== FIREBASE ===== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
-    onValue(faultLogsRef, (snapshot) => {
-      const table = document.getElementById("faultTable");
-      table.innerHTML = "";
-      let i = 1;
+const firebaseConfig = {
+  databaseURL: "https://lightning-detection-aaa-default-rtdb.asia-southeast1.firebasedatabase.app/"
+};
 
-      snapshot.forEach((child) => {
-        if (child.key.startsWith("fault_")) {
-          const d = child.val();
-          table.innerHTML += `
-            <tr>
-              <td>${i++}</td>
-              <td>${d.time}</td>
-              <td>${d.reason}</td>
-              <td>${d.status}</td>
-            </tr>`;
-        }
-      });
-    });
-  </script>
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+onValue(ref(db,"FaultLogs/totalFaults"), snap=>{
+  document.getElementById("faultCount").innerText = snap.exists()?snap.val():0;
+});
+
+onValue(ref(db,"FaultLogs"), snap=>{
+  const table = document.getElementById("faultTable");
+  table.innerHTML="";
+  let i=1;
+  snap.forEach(child=>{
+    if(child.key.startsWith("fault_")){
+      const d=child.val();
+      table.innerHTML+=`
+      <tr>
+        <td>${i++}</td>
+        <td>${d.time}</td>
+        <td>${d.reason}</td>
+        <td><span class="status tripped">${d.status}</span></td>
+      </tr>`;
+    }
+  });
+});
+</script>
 
 </body>
 </html>
