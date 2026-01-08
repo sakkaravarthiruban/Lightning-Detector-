@@ -103,15 +103,35 @@
             background-color: rgba(255, 193, 7, 0.1);
         }
         
-        .control-btn {
-            padding: 15px;
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-        
         .chart-container {
             height: 300px;
             position: relative;
+        }
+        
+        .device-info {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .device-info h5 {
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .info-item {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            display: inline-block;
+            width: 120px;
         }
     </style>
 </head>
@@ -124,6 +144,11 @@
                     <div class="card-body text-center">
                         <h1 class="display-4 mb-2">⚡ Lightning Detection System</h1>
                         <p class="lead mb-0">Real-time monitoring of high voltage safety system</p>
+                        <div class="mt-3">
+                            <span class="badge bg-primary me-2"><i class="bi bi-wifi"></i> ESP32</span>
+                            <span class="badge bg-success me-2"><i class="bi bi-shield-check"></i> Safety System</span>
+                            <span class="badge bg-info"><i class="bi bi-cloud"></i> Firebase Realtime</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -131,8 +156,9 @@
 
         <!-- Main Dashboard -->
         <div class="row">
-            <!-- System Status -->
+            <!-- System Status & Device Info -->
             <div class="col-lg-4 col-md-6">
+                <!-- System Status -->
                 <div class="card">
                     <div class="card-header bg-primary text-white">
                         <i class="bi bi-speedometer2 me-2"></i>System Status
@@ -158,35 +184,56 @@
                     </div>
                 </div>
 
-                <!-- Device Controls -->
+                <!-- Device Information -->
                 <div class="card mt-3">
                     <div class="card-header bg-dark text-white">
-                        <i class="bi bi-gear me-2"></i>Device Controls
+                        <i class="bi bi-cpu me-2"></i>Device Information
                     </div>
                     <div class="card-body">
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <button class="btn btn-success control-btn w-100" id="relayOn">
-                                    <i class="bi bi-power me-2"></i>Relay ON
-                                </button>
+                        <div class="device-info">
+                            <h5><i class="bi bi-motherboard me-2"></i>ESP32 Device</h5>
+                            <div class="info-item">
+                                <span class="info-label">IP Address:</span>
+                                <span id="deviceIP">192.168.1.100</span>
                             </div>
-                            <div class="col-6">
-                                <button class="btn btn-danger control-btn w-100" id="relayOff">
-                                    <i class="bi bi-power me-2"></i>Relay OFF
-                                </button>
+                            <div class="info-item">
+                                <span class="info-label">Uptime:</span>
+                                <span id="deviceUptime">0 days</span>
                             </div>
-                            <div class="col-12 mt-2">
-                                <button class="btn btn-warning control-btn w-100" id="testFault">
-                                    <i class="bi bi-lightning-charge me-2"></i>Test Fault
-                                </button>
+                            <div class="info-item">
+                                <span class="info-label">WiFi Status:</span>
+                                <span class="badge bg-success" id="wifiStatus">Connected</span>
                             </div>
+                            <div class="info-item">
+                                <span class="info-label">Firebase:</span>
+                                <span class="badge bg-success" id="firebaseStatus">Connected</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <h6><i class="bi bi-diagram-3 me-2"></i>System Components</h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-lightning-charge text-warning me-2"></i>HV Sensor</span>
+                                    <span class="badge bg-primary">Pin 27</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-toggle-on text-success me-2"></i>Safety Relay</span>
+                                    <span class="badge bg-primary">Pin 25</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-display text-info me-2"></i>LCD Display</span>
+                                    <span class="badge bg-primary">I2C 0x27</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Statistics -->
+            <!-- Statistics & LED Status -->
             <div class="col-lg-4 col-md-6">
+                <!-- Statistics -->
                 <div class="card">
                     <div class="card-header bg-info text-white">
                         <i class="bi bi-graph-up me-2"></i>Statistics
@@ -225,6 +272,10 @@
                                 <div id="healthBar" class="progress-bar bg-success" 
                                      role="progressbar" style="width: 100%">100%</div>
                             </div>
+                            <small class="text-muted mt-2 d-block">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Health based on fault frequency and system stability
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -232,13 +283,13 @@
                 <!-- LED Status -->
                 <div class="card mt-3">
                     <div class="card-header bg-success text-white">
-                        <i class="bi bi-lightbulb me-2"></i>LED Indicators
+                        <i class="bi bi-lightbulb me-2"></i>Visual Indicators
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-6">
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="indicator-indicator indicator-normal me-2"></div>
+                                    <div class="status-indicator indicator-normal me-2"></div>
                                     <div>
                                         <div class="fw-bold">Green LED</div>
                                         <div class="text-muted small">Normal Status</div>
@@ -250,7 +301,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="indicator-indicator indicator-fault me-2"></div>
+                                    <div class="status-indicator indicator-fault me-2"></div>
                                     <div>
                                         <div class="fw-bold">Red LED</div>
                                         <div class="text-muted small">Fault Status</div>
@@ -262,16 +313,36 @@
                             </div>
                             <div class="col-6">
                                 <div class="d-flex align-items-center">
-                                    <div class="indicator-indicator indicator-warning me-2"></div>
+                                    <div class="status-indicator indicator-warning me-2"></div>
                                     <div>
                                         <div class="fw-bold">Buzzer</div>
-                                        <div class="text-muted small">Alarm</div>
+                                        <div class="text-muted small">Audible Alarm</div>
                                     </div>
                                     <div class="ms-auto">
                                         <span class="badge bg-secondary" id="buzzer">OFF</span>
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <div class="status-indicator indicator-info me-2"></div>
+                                    <div>
+                                        <div class="fw-bold">LCD Display</div>
+                                        <div class="text-muted small">Status Messages</div>
+                                    </div>
+                                    <div class="ms-auto">
+                                        <span class="badge bg-info" id="lcdStatus">ACTIVE</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-light mt-3">
+                            <small>
+                                <i class="bi bi-lightning-charge text-warning me-1"></i>
+                                <strong>Note:</strong> During normal operation, Green LED is ON and Relay is CLOSED. 
+                                During faults, Red LED and Buzzer activate, and Relay trips.
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -288,6 +359,68 @@
                             <div class="text-center text-muted py-4">
                                 <i class="bi bi-exclamation-circle display-6 d-block mb-2"></i>
                                 <span>No faults detected yet</span>
+                                <p class="small mt-2">System operating normally</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Showing latest 10 faults. Auto-refreshes every 5 seconds.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <i class="bi bi-info-circle me-2"></i>System Information
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-shield-check me-2"></i>Safety Features</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Automatic fault detection</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Instant relay tripping</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Visual & audible alarms</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Auto-restore after 2 seconds</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Real-time remote monitoring</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-cloud-upload me-2"></i>Data Logging</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-database me-2"></i>Firebase Realtime Database</li>
+                                    <li><i class="bi bi-clock-history me-2"></i>NTP time synchronization</li>
+                                    <li><i class="bi bi-calendar-check me-2"></i>Daily/monthly statistics</li>
+                                    <li><i class="bi bi-graph-up me-2"></i>Real-time status updates</li>
+                                    <li><i class="bi bi-exclamation-triangle me-2"></i>Fault history tracking</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="bi bi-activity me-2"></i>Live Activity
+                    </div>
+                    <div class="card-body">
+                        <div id="activityLog" style="max-height: 200px; overflow-y: auto;">
+                            <div class="alert alert-info mb-2 py-2">
+                                <small><i class="bi bi-check-circle me-1"></i> System connected to Firebase</small>
+                            </div>
+                            <div class="alert alert-success mb-2 py-2">
+                                <small><i class="bi bi-wifi me-1"></i> WiFi connection established</small>
+                            </div>
+                            <div class="alert alert-light mb-2 py-2">
+                                <small><i class="bi bi-clock me-1"></i> NTP time synchronized</small>
                             </div>
                         </div>
                     </div>
@@ -295,20 +428,17 @@
             </div>
         </div>
 
-        <!-- Notification Panel -->
+        <!-- Footer -->
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header bg-warning text-dark">
-                        <i class="bi bi-bell me-2"></i>Notifications
-                    </div>
-                    <div class="card-body p-0">
-                        <div id="notifications">
-                            <div class="alert alert-info m-3">
-                                <i class="bi bi-info-circle me-2"></i>
-                                System connected and monitoring...
-                            </div>
-                        </div>
+                    <div class="card-body text-center">
+                        <p class="mb-0 text-muted">
+                            <i class="bi bi-c-circle"></i> Lightning Detection System v2.0 | 
+                            <i class="bi bi-wifi ms-3"></i> ESP32 + Firebase | 
+                            <i class="bi bi-shield-check ms-3"></i> High Voltage Safety Monitor
+                        </p>
+                        <small class="text-muted">Last updated: <span id="pageUpdateTime">--:--:--</span></small>
                     </div>
                 </div>
             </div>
@@ -317,14 +447,12 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         // Firebase Configuration
         const firebaseConfig = {
             databaseURL: "https://lightning-detection-aaa-default-rtdb.asia-southeast1.firebasedatabase.app/",
-            apiKey: "AIzaSyCwN8vXy3XqgR9v8J7Qz7wv6yLmNpQrT9uI", // You'll need to add this to your Firebase project
+            apiKey: "AIzaSyCwN8vXy3XqgR9v8J7Qz7wv6yLmNpQrT9uI",
             authDomain: "lightning-detection-aaa.firebaseapp.com",
             projectId: "lightning-detection-aaa",
             storageBucket: "lightning-detection-aaa.appspot.com",
@@ -341,7 +469,8 @@
             relay: true,
             faultCount: 0,
             lastFault: null,
-            isConnected: false
+            isConnected: false,
+            lastUpdateTime: null
         };
 
         // DOM Elements
@@ -357,17 +486,15 @@
             redLed: document.getElementById('redLed'),
             buzzer: document.getElementById('buzzer'),
             faultLogs: document.getElementById('faultLogs'),
-            notifications: document.getElementById('notifications'),
             healthBar: document.getElementById('healthBar'),
-            relayOn: document.getElementById('relayOn'),
-            relayOff: document.getElementById('relayOff'),
-            testFault: document.getElementById('testFault')
+            deviceIP: document.getElementById('deviceIP'),
+            deviceUptime: document.getElementById('deviceUptime'),
+            wifiStatus: document.getElementById('wifiStatus'),
+            firebaseStatus: document.getElementById('firebaseStatus'),
+            lcdStatus: document.getElementById('lcdStatus'),
+            pageUpdateTime: document.getElementById('pageUpdateTime'),
+            activityLog: document.getElementById('activityLog')
         };
-
-        // Initialize Chart
-        const ctx = document.createElement('canvas');
-        ctx.id = 'faultChart';
-        let faultChart;
 
         // Firebase Listeners
         function setupFirebaseListeners() {
@@ -393,6 +520,20 @@
                 const status = snapshot.val();
                 if (status) {
                     updateSystemStatus(status);
+                    addActivityLog('System status updated', 'info');
+                }
+            });
+
+            // Listen for connection status
+            database.ref('.info/connected').on('value', (snapshot) => {
+                const connected = snapshot.val();
+                elements.firebaseStatus.textContent = connected ? 'Connected' : 'Disconnected';
+                elements.firebaseStatus.className = connected ? 'badge bg-success' : 'badge bg-danger';
+                
+                if (connected) {
+                    addActivityLog('Connected to Firebase', 'success');
+                } else {
+                    addActivityLog('Disconnected from Firebase', 'danger');
                 }
             });
         }
@@ -402,7 +543,11 @@
             const logs = Object.keys(data)
                 .filter(key => key.startsWith('fault_'))
                 .map(key => data[key])
-                .sort((a, b) => new Date(b.time) - new Date(a.time))
+                .sort((a, b) => {
+                    const timeA = a.time || '0000-00-00 00:00:00';
+                    const timeB = b.time || '0000-00-00 00:00:00';
+                    return timeB.localeCompare(timeA);
+                })
                 .slice(0, 10);
 
             if (logs.length === 0) {
@@ -410,22 +555,35 @@
                     <div class="text-center text-muted py-4">
                         <i class="bi bi-exclamation-circle display-6 d-block mb-2"></i>
                         <span>No faults detected yet</span>
+                        <p class="small mt-2">System operating normally</p>
                     </div>
                 `;
                 return;
             }
 
-            elements.faultLogs.innerHTML = logs.map(log => `
-                <div class="log-entry">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <strong>${log.reason || 'High Voltage Pulse'}</strong><br>
-                            <small class="text-muted">${log.time || 'Unknown time'}</small>
+            elements.faultLogs.innerHTML = logs.map((log, index) => {
+                const isNew = index === 0 && (!systemState.lastFault || log.time !== systemState.lastFault.time);
+                const faultTime = log.time || 'Unknown time';
+                const faultDate = faultTime.substring(0, 10);
+                const faultClock = faultTime.substring(11);
+                
+                return `
+                    <div class="log-entry ${isNew ? 'new' : ''}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong><i class="bi bi-lightning-charge text-warning me-1"></i>${log.reason || 'High Voltage Pulse'}</strong><br>
+                                <small class="text-muted">${faultDate} • ${faultClock}</small>
+                            </div>
+                            <span class="badge bg-danger">${log.status || 'Tripped'}</span>
                         </div>
-                        <span class="badge bg-danger">${log.status || 'Tripped'}</span>
+                        ${log.manualReset ? '<small class="text-warning"><i class="bi bi-gear me-1"></i>Manual reset</small>' : ''}
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+            
+            if (logs.length > 0) {
+                systemState.lastFault = logs[0];
+            }
         }
 
         // Update System Status
@@ -464,8 +622,24 @@
             elements.buzzer.textContent = status.buzzer ? 'ON' : 'OFF';
             elements.buzzer.className = status.buzzer ? 'badge bg-warning' : 'badge bg-secondary';
             
+            // Update device info
+            if (status.ip) elements.deviceIP.textContent = status.ip;
+            if (status.connected !== undefined) {
+                elements.wifiStatus.textContent = status.connected ? 'Connected' : 'Disconnected';
+                elements.wifiStatus.className = status.connected ? 'badge bg-success' : 'badge bg-danger';
+            }
+            
+            // Update uptime
+            if (status.uptime) {
+                const days = Math.floor(status.uptime / 86400);
+                const hours = Math.floor((status.uptime % 86400) / 3600);
+                elements.deviceUptime.textContent = `${days}d ${hours}h`;
+            }
+            
             // Update last update time
-            elements.lastUpdate.textContent = new Date().toLocaleTimeString();
+            const now = new Date();
+            elements.lastUpdate.textContent = now.toLocaleTimeString();
+            systemState.lastUpdateTime = now;
         }
 
         // Update Statistics
@@ -487,17 +661,23 @@
             
             // Update last fault time
             if (faults.length > 0) {
-                const lastFault = faults.sort((a, b) => 
-                    new Date(b.time) - new Date(a.time)
-                )[0];
+                const lastFault = faults.sort((a, b) => {
+                    const timeA = a.time || '0000-00-00 00:00:00';
+                    const timeB = b.time || '0000-00-00 00:00:00';
+                    return new Date(timeB) - new Date(timeA);
+                })[0];
                 
-                const faultTime = new Date(lastFault.time);
-                const hoursAgo = Math.floor((now - faultTime) / (1000 * 60 * 60));
-                
-                if (hoursAgo < 24) {
-                    elements.lastFault.textContent = `${hoursAgo}h ago`;
-                } else {
-                    elements.lastFault.textContent = `${Math.floor(hoursAgo/24)}d ago`;
+                if (lastFault.time) {
+                    const faultTime = new Date(lastFault.time);
+                    const hoursAgo = Math.floor((now - faultTime) / (1000 * 60 * 60));
+                    
+                    if (hoursAgo < 1) {
+                        elements.lastFault.textContent = `${Math.floor(hoursAgo * 60)}m ago`;
+                    } else if (hoursAgo < 24) {
+                        elements.lastFault.textContent = `${hoursAgo}h ago`;
+                    } else {
+                        elements.lastFault.textContent = `${Math.floor(hoursAgo/24)}d ago`;
+                    }
                 }
             }
         }
@@ -520,8 +700,8 @@
             }
         }
 
-        // Add Notification
-        function addNotification(type, message) {
+        // Add Activity Log
+        function addActivityLog(message, type = 'info') {
             const alertClass = {
                 'info': 'alert-info',
                 'warning': 'alert-warning',
@@ -529,65 +709,66 @@
                 'success': 'alert-success'
             }[type] || 'alert-info';
             
-            const notification = document.createElement('div');
-            notification.className = `alert ${alertClass} m-3`;
-            notification.innerHTML = `
-                <i class="bi bi-${type === 'warning' ? 'exclamation-triangle' : 
-                                  type === 'danger' ? 'exclamation-circle' : 
-                                  type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
-                ${message}
-                <button type="button" class="btn-close float-end" data-bs-dismiss="alert"></button>
+            const icon = {
+                'info': 'info-circle',
+                'warning': 'exclamation-triangle',
+                'danger': 'exclamation-circle',
+                'success': 'check-circle'
+            }[type] || 'info-circle';
+            
+            const activityItem = document.createElement('div');
+            activityItem.className = `alert ${alertClass} mb-2 py-2`;
+            activityItem.innerHTML = `
+                <small><i class="bi bi-${icon} me-1"></i> ${message}</small>
             `;
             
-            elements.notifications.insertBefore(notification, elements.notifications.firstChild);
+            elements.activityLog.insertBefore(activityItem, elements.activityLog.firstChild);
             
-            // Auto-remove after 10 seconds
+            // Keep only last 5 activity items
+            while (elements.activityLog.children.length > 5) {
+                elements.activityLog.removeChild(elements.activityLog.lastChild);
+            }
+            
+            // Auto-remove after 30 seconds
             setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
+                if (activityItem.parentNode) {
+                    activityItem.remove();
                 }
-            }, 10000);
+            }, 30000);
         }
-
-        // Control Functions
-        elements.relayOn.addEventListener('click', () => {
-            database.ref('/Control/relay').set(true);
-            addNotification('success', 'Relay command sent: ON');
-        });
-
-        elements.relayOff.addEventListener('click', () => {
-            database.ref('/Control/relay').set(false);
-            addNotification('warning', 'Relay command sent: OFF');
-        });
-
-        elements.testFault.addEventListener('click', () => {
-            database.ref('/Control/testFault').set(true);
-            setTimeout(() => database.ref('/Control/testFault').remove(), 1000);
-            addNotification('info', 'Test fault triggered');
-        });
 
         // Initialize
         function init() {
             setupFirebaseListeners();
             updateHealthBar();
             
-            // Add initial notification
-            addNotification('info', 'Connected to Firebase database');
+            // Add initial activity logs
+            addActivityLog('Web app loaded', 'info');
+            addActivityLog('Monitoring system started', 'success');
             
-            // Update time every second
+            // Update page time every second
             setInterval(() => {
                 const now = new Date();
                 elements.lastUpdate.textContent = now.toLocaleTimeString();
+                elements.pageUpdateTime.textContent = now.toLocaleTimeString();
+                
+                // Update uptime if systemState has lastUpdateTime
+                if (systemState.lastUpdateTime) {
+                    const timeDiff = Math.floor((now - systemState.lastUpdateTime) / 1000);
+                    if (timeDiff > 60) {
+                        addActivityLog(`No update for ${Math.floor(timeDiff/60)} minutes`, 'warning');
+                    }
+                }
             }, 1000);
             
-            // Simulate uptime (in a real app, this would come from Firebase)
+            // Simulate uptime update
             setInterval(() => {
-                const uptime = Math.floor((Date.now() - startTime) / (1000 * 60 * 60 * 24));
-                document.getElementById('uptime').textContent = uptime;
+                if (elements.deviceUptime.textContent === '0 days') {
+                    elements.uptime.textContent = '0';
+                }
             }, 60000);
         }
 
-        const startTime = Date.now();
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
