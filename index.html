@@ -44,9 +44,6 @@
   
   --white: #ffffff;
   --black: #000000;
-  
-  --sidebar-width: 280px;
-  --header-height: 70px;
 }
 
 * {
@@ -57,134 +54,59 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  background: var(--gray-50);
+  background: linear-gradient(135deg, var(--gray-50) 0%, #f0f9ff 100%);
   color: var(--gray-800);
   line-height: 1.5;
-  overflow-x: hidden;
-}
-
-/* ===== LAYOUT ===== */
-.app-container {
-  display: flex;
-  min-height: 100vh;
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar {
-  width: var(--sidebar-width);
-  background: linear-gradient(180deg, var(--gray-900) 0%, var(--primary-900) 100%);
-  color: var(--white);
-  position: fixed;
-  height: 100vh;
-  z-index: 1000;
-  padding: 30px 0;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-}
-
-.logo-container {
-  padding: 0 30px 40px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 30px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 1.8rem;
-  font-weight: 700;
-}
-
-.logo-icon {
-  background: var(--primary-500);
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-}
-
-.nav-menu {
-  flex: 1;
-  padding: 0 20px;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 15px 20px;
-  margin-bottom: 8px;
-  border-radius: 12px;
-  color: var(--gray-300);
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--white);
-}
-
-.nav-item.active {
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
-  color: var(--white);
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
-}
-
-.nav-item i {
-  font-size: 1.1rem;
-  width: 24px;
-  text-align: center;
-}
-
-.sidebar-footer {
-  padding: 25px 30px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--gray-400);
-  font-size: 0.85rem;
-}
-
-/* ===== MAIN CONTENT ===== */
-.main-content {
-  flex: 1;
-  margin-left: var(--sidebar-width);
   min-height: 100vh;
 }
 
 /* ===== HEADER ===== */
 .header {
-  height: var(--header-height);
   background: var(--white);
   border-bottom: 1px solid var(--gray-200);
-  padding: 0 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  padding: 20px 30px;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.header-left h1 {
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
   font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--gray-800);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
 }
 
-.header-left p {
+.logo-text h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
+.logo-text p {
   color: var(--gray-500);
   font-size: 0.9rem;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
-.header-right {
+.header-controls {
   display: flex;
   align-items: center;
   gap: 25px;
@@ -193,19 +115,19 @@ body {
 .status-indicator {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 10px;
+  padding: 10px 18px;
   background: var(--gray-100);
-  border-radius: 20px;
+  border-radius: 12px;
   font-size: 0.9rem;
   font-weight: 500;
+  border: 1px solid var(--gray-200);
 }
 
 .status-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--success-500);
 }
 
 .status-dot.connected {
@@ -218,15 +140,43 @@ body {
   box-shadow: 0 0 10px var(--danger-500);
 }
 
-/* ===== CONTENT AREA ===== */
-.content {
+.current-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: var(--gray-700);
+  font-size: 0.95rem;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
   padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ===== DASHBOARD TITLE ===== */
+.dashboard-title {
+  margin-bottom: 30px;
+}
+
+.dashboard-title h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 8px;
+}
+
+.dashboard-title p {
+  color: var(--gray-600);
+  font-size: 1rem;
 }
 
 /* ===== STATS OVERVIEW ===== */
 .stats-overview {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 25px;
   margin-bottom: 40px;
 }
@@ -236,15 +186,15 @@ body {
   border-radius: 16px;
   padding: 30px;
   border: 1px solid var(--gray-200);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
 .stat-card::before {
@@ -265,23 +215,27 @@ body {
   background: linear-gradient(90deg, var(--warning-500), var(--warning-700));
 }
 
+.stat-card.success::before {
+  background: linear-gradient(90deg, var(--success-500), var(--success-700));
+}
+
 .stat-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
   background: var(--primary-100);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--primary-600);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
 }
 
 .stat-card.critical .stat-icon {
@@ -294,11 +248,17 @@ body {
   color: var(--warning-600);
 }
 
+.stat-card.success .stat-icon {
+  background: var(--success-100);
+  color: var(--success-600);
+}
+
 .stat-value {
   font-size: 3.5rem;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  font-feature-settings: "tnum";
 }
 
 .stat-card .stat-value {
@@ -309,29 +269,45 @@ body {
   color: var(--danger-600);
 }
 
+.stat-card.warning .stat-value {
+  color: var(--warning-600);
+}
+
+.stat-card.success .stat-value {
+  color: var(--success-600);
+}
+
 .stat-label {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--gray-600);
   font-weight: 500;
   margin-bottom: 5px;
+  letter-spacing: 0.3px;
 }
 
 .stat-trend {
   font-size: 0.85rem;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  margin-top: 15px;
 }
 
 .trend-up {
   color: var(--danger-600);
+  font-weight: 600;
 }
 
 .trend-down {
   color: var(--success-600);
+  font-weight: 600;
 }
 
-/* ===== MAIN DASHBOARD ===== */
+.trend-neutral {
+  color: var(--gray-500);
+}
+
+/* ===== DASHBOARD GRID ===== */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -339,12 +315,18 @@ body {
   margin-bottom: 40px;
 }
 
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ===== TABLE CARD ===== */
 .table-card {
   background: var(--white);
   border-radius: 16px;
   border: 1px solid var(--gray-200);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
@@ -354,25 +336,29 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: linear-gradient(90deg, var(--gray-50), var(--white));
 }
 
 .card-header h2 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--gray-800);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .card-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .btn {
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
   border: none;
   font-family: inherit;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -382,12 +368,14 @@ body {
 }
 
 .btn-primary {
-  background: var(--primary-600);
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
   color: var(--white);
 }
 
 .btn-primary:hover {
-  background: var(--primary-700);
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-800));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(2, 132, 199, 0.3);
 }
 
 .btn-outline {
@@ -397,21 +385,28 @@ body {
 }
 
 .btn-outline:hover {
-  background: var(--gray-100);
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+  transform: translateY(-2px);
 }
 
 .table-responsive {
   overflow-x: auto;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 800px;
+  min-width: 900px;
 }
 
 thead {
   background: var(--gray-50);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 th {
@@ -434,7 +429,7 @@ td {
 }
 
 tbody tr {
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 tbody tr:hover {
@@ -443,29 +438,30 @@ tbody tr:hover {
 
 /* ===== STATUS BADGE ===== */
 .status-badge {
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: 20px;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  letter-spacing: 0.3px;
 }
 
 .badge-critical {
-  background: var(--danger-100);
+  background: linear-gradient(135deg, var(--danger-100), var(--danger-50));
   color: var(--danger-700);
   border: 1px solid var(--danger-200);
 }
 
 .badge-warning {
-  background: var(--warning-100);
+  background: linear-gradient(135deg, var(--warning-100), var(--warning-50));
   color: var(--warning-700);
   border: 1px solid var(--warning-200);
 }
 
 .badge-resolved {
-  background: var(--success-100);
+  background: linear-gradient(135deg, var(--success-100), var(--success-50));
   color: var(--success-700);
   border: 1px solid var(--success-200);
 }
@@ -479,22 +475,25 @@ tbody tr:hover {
   background: var(--white);
   border-radius: 16px;
   border: 1px solid var(--gray-200);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
   padding: 30px;
 }
 
 .system-info-card h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.3rem;
+  font-weight: 700;
   margin-bottom: 25px;
-  color: var(--gray-800);
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .info-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--gray-200);
 }
 
@@ -505,11 +504,13 @@ tbody tr:hover {
 .info-label {
   color: var(--gray-600);
   font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .info-value {
   font-weight: 600;
   color: var(--gray-800);
+  font-size: 0.95rem;
 }
 
 .info-value.connected {
@@ -525,7 +526,7 @@ tbody tr:hover {
   background: var(--white);
   border-radius: 16px;
   border: 1px solid var(--gray-200);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
   padding: 30px;
   margin-bottom: 40px;
 }
@@ -538,20 +539,24 @@ tbody tr:hover {
 }
 
 .chart-header h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--gray-800);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .chart-placeholder {
   height: 300px;
-  background: var(--gray-50);
+  background: linear-gradient(135deg, var(--gray-50), var(--white));
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--gray-500);
   font-size: 1rem;
+  border: 2px dashed var(--gray-300);
 }
 
 /* ===== FOOTER ===== */
@@ -564,6 +569,23 @@ tbody tr:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 40px;
+  border-radius: 16px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.version {
+  background: var(--gray-100);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--gray-700);
 }
 
 .footer-links {
@@ -575,6 +597,9 @@ tbody tr:hover {
   color: var(--gray-600);
   text-decoration: none;
   transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .footer-links a:hover {
@@ -613,6 +638,17 @@ tbody tr:hover {
   }
 }
 
+@keyframes countUp {
+  from {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .fade-in {
   animation: fadeIn 0.5s ease-out;
 }
@@ -621,47 +657,62 @@ tbody tr:hover {
   animation: pulse 2s infinite;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
+.count-up {
+  animation: countUp 0.3s ease-out;
 }
 
+/* ===== RESPONSIVE ===== */
 @media (max-width: 992px) {
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
+  .header {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
   }
   
-  .sidebar.active {
-    transform: translateX(0);
+  .logo-section {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .header-controls {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
   }
   
   .main-content {
-    margin-left: 0;
-  }
-  
-  .menu-toggle {
-    display: block;
+    padding: 20px;
   }
 }
 
 @media (max-width: 768px) {
-  .header {
-    padding: 0 20px;
-  }
-  
-  .content {
-    padding: 20px;
-  }
-  
   .stats-overview {
     grid-template-columns: 1fr;
   }
   
   .stat-value {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .card-actions {
+    justify-content: center;
+  }
+  
+  .footer {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .footer-info {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 
@@ -715,259 +766,227 @@ tbody tr:hover {
 
 <body>
 
-<div class="app-container">
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="logo-section">
+    <div class="logo">
+      <i class="fas fa-bolt"></i>
+    </div>
+    <div class="logo-text">
+      <h1>HV Safety Monitoring System</h1>
+      <p>Enterprise-Grade Protection Dashboard</p>
+    </div>
+  </div>
   
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
-    <div class="logo-container">
-      <div class="logo">
-        <div class="logo-icon">
-          <i class="fas fa-bolt"></i>
-        </div>
-        <span>HV Safety</span>
-      </div>
+  <div class="header-controls">
+    <div class="status-indicator">
+      <div class="status-dot connected" id="connectionStatus"></div>
+      <span id="connectionText">System Connected</span>
     </div>
     
-    <nav class="nav-menu">
-      <a href="#" class="nav-item active">
-        <i class="fas fa-tachometer-alt"></i>
-        <span>Dashboard</span>
-      </a>
-      <a href="#" class="nav-item">
-        <i class="fas fa-history"></i>
-        <span>Fault History</span>
-      </a>
-      <a href="#" class="nav-item">
+    <div class="current-time">
+      <i class="far fa-clock"></i>
+      <span id="currentTime">--:--:--</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main-content">
+  
+  <!-- ===== DASHBOARD TITLE ===== -->
+  <div class="dashboard-title">
+    <h2>System Overview Dashboard</h2>
+    <p>Real-time monitoring of high voltage safety systems and fault detection</p>
+  </div>
+  
+  <!-- ===== STATS OVERVIEW ===== -->
+  <div class="stats-overview">
+    <div class="stat-card critical fade-in">
+      <div class="stat-header">
+        <div>
+          <div class="stat-label">Total Fault Count</div>
+          <div class="stat-value" id="faultCount">0</div>
+        </div>
+        <div class="stat-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+      </div>
+      <div class="stat-trend">
         <i class="fas fa-chart-line"></i>
-        <span>Analytics</span>
-      </a>
-      <a href="#" class="nav-item">
-        <i class="fas fa-cog"></i>
-        <span>System Settings</span>
-      </a>
-      <a href="#" class="nav-item">
-        <i class="fas fa-shield-alt"></i>
-        <span>Safety Protocols</span>
-      </a>
-      <a href="#" class="nav-item">
-        <i class="fas fa-users"></i>
-        <span>User Management</span>
-      </a>
-      <a href="#" class="nav-item">
-        <i class="fas fa-file-alt"></i>
-        <span>Reports</span>
-      </a>
-    </nav>
-    
-    <div class="sidebar-footer">
-      <p>HV Safety Monitoring v2.5</p>
-      <p class="text-muted">© 2024 EnergyTech Systems</p>
+        <span class="trend-up">+2 this week</span>
+      </div>
     </div>
-  </aside>
+    
+    <div class="stat-card warning fade-in" style="animation-delay: 0.1s">
+      <div class="stat-header">
+        <div>
+          <div class="stat-label">Active Alerts</div>
+          <div class="stat-value">3</div>
+        </div>
+        <div class="stat-icon">
+          <i class="fas fa-bell"></i>
+        </div>
+      </div>
+      <div class="stat-trend">
+        <i class="fas fa-clock"></i>
+        <span class="trend-neutral">Monitoring 24/7</span>
+      </div>
+    </div>
+    
+    <div class="stat-card success fade-in" style="animation-delay: 0.2s">
+      <div class="stat-header">
+        <div>
+          <div class="stat-label">System Uptime</div>
+          <div class="stat-value">99.8%</div>
+        </div>
+        <div class="stat-icon">
+          <i class="fas fa-server"></i>
+        </div>
+      </div>
+      <div class="stat-trend">
+        <i class="fas fa-check-circle"></i>
+        <span class="trend-down">Stable operation</span>
+      </div>
+    </div>
+  </div>
   
-  <!-- ===== MAIN CONTENT ===== -->
-  <main class="main-content">
+  <!-- ===== DASHBOARD GRID ===== -->
+  <div class="dashboard-grid">
     
-    <!-- ===== HEADER ===== -->
-    <header class="header">
-      <div class="header-left">
-        <h1>High Voltage Safety Monitoring</h1>
-        <p>Real-time fault detection and protection system</p>
-      </div>
-      
-      <div class="header-right">
-        <div class="status-indicator">
-          <div class="status-dot connected" id="connectionStatus"></div>
-          <span id="connectionText">Connected</span>
-        </div>
-        
-        <div class="current-time">
-          <i class="far fa-clock"></i>
-          <span id="currentTime">--:--:--</span>
-        </div>
-      </div>
-    </header>
-    
-    <!-- ===== CONTENT AREA ===== -->
-    <div class="content">
-      
-      <!-- ===== STATS OVERVIEW ===== -->
-      <div class="stats-overview">
-        <div class="stat-card critical fade-in">
-          <div class="stat-header">
-            <div>
-              <div class="stat-label">Total Fault Count</div>
-              <div class="stat-value" id="faultCount">0</div>
-            </div>
-            <div class="stat-icon">
-              <i class="fas fa-exclamation-triangle"></i>
-            </div>
-          </div>
-          <div class="stat-trend">
-            <i class="fas fa-chart-line"></i>
-            <span class="trend-up">+2 this week</span>
-          </div>
-        </div>
-        
-        <div class="stat-card warning fade-in" style="animation-delay: 0.1s">
-          <div class="stat-header">
-            <div>
-              <div class="stat-label">Active Alerts</div>
-              <div class="stat-value">3</div>
-            </div>
-            <div class="stat-icon">
-              <i class="fas fa-bell"></i>
-            </div>
-          </div>
-          <div class="stat-trend">
-            <i class="fas fa-clock"></i>
-            <span>Monitoring 24/7</span>
-          </div>
-        </div>
-        
-        <div class="stat-card fade-in" style="animation-delay: 0.2s">
-          <div class="stat-header">
-            <div>
-              <div class="stat-label">System Uptime</div>
-              <div class="stat-value">99.8%</div>
-            </div>
-            <div class="stat-icon">
-              <i class="fas fa-server"></i>
-            </div>
-          </div>
-          <div class="stat-trend">
-            <i class="fas fa-check-circle"></i>
-            <span class="trend-down">Stable operation</span>
-          </div>
+    <!-- ===== FAULT LOG TABLE ===== -->
+    <div class="table-card fade-in">
+      <div class="card-header">
+        <h2>
+          <i class="fas fa-history"></i>
+          Recent Fault Logs
+        </h2>
+        <div class="card-actions">
+          <button class="btn btn-outline" onclick="exportData()">
+            <i class="fas fa-file-export"></i>
+            Export CSV
+          </button>
+          <button class="btn btn-primary" onclick="refreshData()">
+            <i class="fas fa-sync-alt"></i>
+            Refresh Data
+          </button>
         </div>
       </div>
       
-      <!-- ===== DASHBOARD GRID ===== -->
-      <div class="dashboard-grid">
-        
-        <!-- ===== FAULT LOG TABLE ===== -->
-        <div class="table-card fade-in">
-          <div class="card-header">
-            <h2>Recent Fault Logs</h2>
-            <div class="card-actions">
-              <button class="btn btn-outline">
-                <i class="fas fa-download"></i>
-                Export
-              </button>
-              <button class="btn btn-primary">
-                <i class="fas fa-sync-alt"></i>
-                Refresh
-              </button>
-            </div>
-          </div>
-          
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Timestamp</th>
-                  <th>Fault Type</th>
-                  <th>Severity</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="faultTable">
-                <!-- Data will be populated here -->
-                <tr>
-                  <td colspan="6" class="text-center" style="padding: 40px;">
-                    <div class="text-muted">
-                      <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
-                      <div>Loading fault data...</div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        
-        <!-- ===== SYSTEM INFO ===== -->
-        <div class="system-info-card fade-in" style="animation-delay: 0.1s">
-          <h3>System Status</h3>
-          
-          <div class="info-item">
-            <span class="info-label">ESP32 Connection</span>
-            <span class="info-value connected" id="esp32Status">Connected</span>
-          </div>
-          
-          <div class="info-item">
-            <span class="info-label">Firebase Sync</span>
-            <span class="info-value connected" id="firebaseStatus">Active</span>
-          </div>
-          
-          <div class="info-item">
-            <span class="info-label">Last Data Sync</span>
-            <span class="info-value" id="lastSync">--:--:--</span>
-          </div>
-          
-          <div class="info-item">
-            <span class="info-label">Memory Usage</span>
-            <span class="info-value">42%</span>
-          </div>
-          
-          <div class="info-item">
-            <span class="info-label">API Response</span>
-            <span class="info-value">124ms</span>
-          </div>
-          
-          <div class="info-item">
-            <span class="info-label">System Load</span>
-            <span class="info-value">Low</span>
-          </div>
-        </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Timestamp</th>
+              <th>Fault Type</th>
+              <th>Severity</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="faultTable">
+            <!-- Data will be populated here -->
+            <tr>
+              <td colspan="6" class="text-center" style="padding: 40px;">
+                <div class="text-muted">
+                  <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
+                  <div>Loading fault data...</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      
-      <!-- ===== CHART SECTION ===== -->
-      <div class="chart-container fade-in" style="animation-delay: 0.2s">
-        <div class="chart-header">
-          <h3>Fault Trends (Last 30 Days)</h3>
-          <div class="card-actions">
-            <select class="btn btn-outline" style="cursor: pointer;">
-              <option>Last 7 Days</option>
-              <option selected>Last 30 Days</option>
-              <option>Last 90 Days</option>
-            </select>
-          </div>
-        </div>
-        
-        <div class="chart-placeholder">
-          <div class="text-center">
-            <i class="fas fa-chart-bar fa-3x mb-3 text-muted"></i>
-            <div class="text-muted">Fault frequency chart will be displayed here</div>
-            <div class="text-muted" style="font-size: 0.8rem; margin-top: 5px;">Chart integration requires additional library</div>
-          </div>
-        </div>
-      </div>
-      
     </div>
     
-    <!-- ===== FOOTER ===== -->
-    <footer class="footer">
-      <div>
-        <span>HV Safety Monitoring System • Enterprise Edition</span>
+    <!-- ===== SYSTEM INFO ===== -->
+    <div class="system-info-card fade-in" style="animation-delay: 0.1s">
+      <h3>
+        <i class="fas fa-info-circle"></i>
+        System Status
+      </h3>
+      
+      <div class="info-item">
+        <span class="info-label">ESP32 Connection</span>
+        <span class="info-value connected" id="esp32Status">Connected</span>
       </div>
       
-      <div class="footer-links">
-        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
-        <a href="#"><i class="fas fa-book"></i> Documentation</a>
-        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+      <div class="info-item">
+        <span class="info-label">Firebase Sync</span>
+        <span class="info-value connected" id="firebaseStatus">Active</span>
       </div>
-    </footer>
+      
+      <div class="info-item">
+        <span class="info-label">Last Data Sync</span>
+        <span class="info-value" id="lastSync">--:--:--</span>
+      </div>
+      
+      <div class="info-item">
+        <span class="info-label">Memory Usage</span>
+        <span class="info-value">42%</span>
+      </div>
+      
+      <div class="info-item">
+        <span class="info-label">API Response</span>
+        <span class="info-value">124ms</span>
+      </div>
+      
+      <div class="info-item">
+        <span class="info-label">System Load</span>
+        <span class="info-value">Low</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ===== CHART SECTION ===== -->
+  <div class="chart-container fade-in" style="animation-delay: 0.2s">
+    <div class="chart-header">
+      <h3>
+        <i class="fas fa-chart-bar"></i>
+        Fault Trends Analysis
+      </h3>
+      <div class="card-actions">
+        <select class="btn btn-outline" style="cursor: pointer; padding: 10px 16px;" onchange="changeTimeRange(this)">
+          <option value="7">Last 7 Days</option>
+          <option value="30" selected>Last 30 Days</option>
+          <option value="90">Last 90 Days</option>
+        </select>
+      </div>
+    </div>
     
-  </main>
-</div>
+    <div class="chart-placeholder">
+      <div class="text-center">
+        <i class="fas fa-chart-line fa-3x mb-3 text-muted"></i>
+        <div class="text-muted">Fault frequency visualization</div>
+        <div class="text-muted" style="font-size: 0.85rem; margin-top: 10px;">
+          Real-time chart updates with each fault detection
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-info">
+    <span>HV Safety Monitoring System • Enterprise Edition</span>
+    <span class="version">v2.5</span>
+    <span>© 2024 EnergyTech Systems</span>
+  </div>
+  
+  <div class="footer-links">
+    <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+    <a href="#"><i class="fas fa-book"></i> Docs</a>
+    <a href="#"><i class="fas fa-cog"></i> Settings</a>
+  </div>
+</footer>
 
 <!-- ===== FIREBASE INTEGRATION ===== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
 const firebaseConfig = {
   databaseURL: "https://lightning-detection-aaa-default-rtdb.asia-southeast1.firebasedatabase.app/"
@@ -977,7 +996,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Update time
+// Update time function
 function updateTime() {
   const now = new Date();
   const timeString = now.toLocaleTimeString('en-US', {
@@ -998,7 +1017,7 @@ function updateTime() {
 setInterval(updateTime, 1000);
 updateTime();
 
-// Connection status
+// Connection status monitoring
 const connectedRef = ref(db, ".info/connected");
 onValue(connectedRef, (snap) => {
   const isConnected = snap.val() === true;
@@ -1009,14 +1028,14 @@ onValue(connectedRef, (snap) => {
   
   if (isConnected) {
     statusDot.className = "status-dot connected";
-    statusText.textContent = "Connected";
+    statusText.textContent = "System Connected";
     esp32Status.textContent = "Connected";
     esp32Status.className = "info-value connected";
     firebaseStatus.textContent = "Active";
     firebaseStatus.className = "info-value connected";
   } else {
     statusDot.className = "status-dot disconnected";
-    statusText.textContent = "Disconnected";
+    statusText.textContent = "System Offline";
     esp32Status.textContent = "Disconnected";
     esp32Status.className = "info-value disconnected";
     firebaseStatus.textContent = "Inactive";
@@ -1024,24 +1043,23 @@ onValue(connectedRef, (snap) => {
   }
 });
 
-// Total fault count
+// Total fault count with animation
 onValue(ref(db, "FaultLogs/totalFaults"), (snap) => {
   const countElement = document.getElementById('faultCount');
   const newValue = snap.exists() ? snap.val() : 0;
   const oldValue = parseInt(countElement.textContent) || 0;
   
-  // Add animation if value changes
   if (newValue !== oldValue) {
-    countElement.style.transform = 'scale(1.1)';
+    countElement.classList.add('count-up');
     setTimeout(() => {
-      countElement.style.transform = 'scale(1)';
+      countElement.classList.remove('count-up');
     }, 300);
   }
   
   countElement.textContent = newValue;
 });
 
-// Fault logs
+// Fault logs display
 onValue(ref(db, "FaultLogs"), (snap) => {
   const table = document.getElementById('faultTable');
   const logs = [];
@@ -1070,6 +1088,7 @@ onValue(ref(db, "FaultLogs"), (snap) => {
           <div class="text-muted">
             <i class="fas fa-inbox fa-2x mb-2"></i>
             <div>No fault logs found</div>
+            <div style="font-size: 0.85rem; margin-top: 5px;">System operating normally</div>
           </div>
         </td>
       </tr>
@@ -1077,7 +1096,7 @@ onValue(ref(db, "FaultLogs"), (snap) => {
   } else {
     let html = '';
     logs.forEach((log, index) => {
-      // Determine severity based on reason
+      // Determine severity
       let severity = 'Medium';
       let badgeClass = 'badge-warning';
       
@@ -1087,11 +1106,11 @@ onValue(ref(db, "FaultLogs"), (snap) => {
       } else if (log.reason.toLowerCase().includes('warning') || log.reason.toLowerCase().includes('threshold')) {
         severity = 'Warning';
         badgeClass = 'badge-warning';
-      } else if (log.reason.toLowerCase().includes('resolved')) {
+      } else if (log.status.toLowerCase().includes('resolved')) {
         badgeClass = 'badge-resolved';
       }
       
-      // Determine status badge
+      // Status badge
       let statusBadge = `<span class="status-badge ${badgeClass}">
         <i class="fas fa-exclamation-circle badge-icon"></i>
         ${log.status}
@@ -1099,9 +1118,9 @@ onValue(ref(db, "FaultLogs"), (snap) => {
       
       html += `
         <tr style="animation: slideInRight 0.3s ease ${index * 0.05}s both;">
-          <td style="font-weight: 600; color: var(--gray-800);">#${log.id}</td>
-          <td style="font-family: 'Monaco', 'Consolas', monospace;">${log.time}</td>
-          <td>${log.reason}</td>
+          <td style="font-weight: 700; color: var(--gray-900);">#${log.id}</td>
+          <td style="font-family: 'Monaco', 'Consolas', monospace; font-weight: 500;">${log.time}</td>
+          <td style="font-weight: 500;">${log.reason}</td>
           <td>
             <span class="status-badge ${badgeClass}">
               <i class="fas fa-signal badge-icon"></i>
@@ -1110,8 +1129,10 @@ onValue(ref(db, "FaultLogs"), (snap) => {
           </td>
           <td>${statusBadge}</td>
           <td>
-            <button class="btn btn-outline" style="padding: 4px 12px; font-size: 0.8rem;">
+            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" 
+                    onclick="viewDetails('${log.id}')">
               <i class="fas fa-eye"></i>
+              View
             </button>
           </td>
         </tr>
@@ -1121,27 +1142,57 @@ onValue(ref(db, "FaultLogs"), (snap) => {
   }
 });
 
-// Simulate system metrics updates
+// System metrics simulation
 function updateSystemMetrics() {
-  const metrics = ['42%', '45%', '38%', '41%'];
+  const metrics = ['42%', '45%', '38%', '41%', '39%', '44%'];
   const loads = ['Low', 'Medium', 'High'];
+  const responses = ['124ms', '98ms', '156ms', '112ms', '89ms'];
   
-  // Randomly update memory usage
+  // Random updates
   if (Math.random() > 0.7) {
     const memoryElement = document.querySelector('.info-item:nth-child(4) .info-value');
     memoryElement.textContent = metrics[Math.floor(Math.random() * metrics.length)];
   }
   
-  // Randomly update system load
   if (Math.random() > 0.8) {
     const loadElement = document.querySelector('.info-item:nth-child(6) .info-value');
     loadElement.textContent = loads[Math.floor(Math.random() * loads.length)];
   }
+  
+  if (Math.random() > 0.6) {
+    const responseElement = document.querySelector('.info-item:nth-child(5) .info-value');
+    responseElement.textContent = responses[Math.floor(Math.random() * responses.length)];
+  }
 }
 
-setInterval(updateSystemMetrics, 5000);
+setInterval(updateSystemMetrics, 8000);
 
-// Add click effects to buttons
+// Utility functions
+function exportData() {
+  alert('Export functionality would generate a CSV file with all fault logs.');
+  // In production, this would generate and download a CSV file
+}
+
+function refreshData() {
+  const refreshBtn = event.target.closest('.btn');
+  refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+  setTimeout(() => {
+    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+    alert('Data refreshed successfully!');
+  }, 1000);
+}
+
+function changeTimeRange(select) {
+  const days = select.value;
+  alert(`Chart time range changed to last ${days} days.`);
+  // In production, this would update the chart data
+}
+
+function viewDetails(faultId) {
+  alert(`Viewing details for Fault #${faultId}\n\nThis would open a detailed view with more information.`);
+}
+
+// Button click animations
 document.addEventListener('click', function(e) {
   if (e.target.closest('.btn')) {
     const btn = e.target.closest('.btn');
