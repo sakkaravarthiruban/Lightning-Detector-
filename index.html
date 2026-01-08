@@ -78,15 +78,17 @@
         }
         
         .stat-card .number {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: bold;
+            line-height: 1;
         }
         
         .stat-card .label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #666;
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-top: 8px;
         }
         
         .log-entry {
@@ -132,6 +134,13 @@
             font-weight: 600;
             display: inline-block;
             width: 120px;
+        }
+        
+        .last-fault-info {
+            font-size: 0.8rem;
+            color: #888;
+            display: block;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -259,9 +268,10 @@
                                 </div>
                             </div>
                             <div class="col-6">
+                                <!-- Corrected Last Fault Section -->
                                 <div class="stat-card bg-light">
-                                    <div class="number text-danger" id="lastFault">-</div>
-                                    <div class="label">Last Fault</div>
+                                    <div class="number text-danger" id="lastFaultAgo">-</div>
+                                    <div class="label">LAST FAULT</div>
                                 </div>
                             </div>
                         </div>
@@ -481,7 +491,7 @@
             lastUpdate: document.getElementById('lastUpdate'),
             totalFaults: document.getElementById('totalFaults'),
             monthFaults: document.getElementById('monthFaults'),
-            lastFault: document.getElementById('lastFault'),
+            lastFaultAgo: document.getElementById('lastFaultAgo'),
             greenLed: document.getElementById('greenLed'),
             redLed: document.getElementById('redLed'),
             buzzer: document.getElementById('buzzer'),
@@ -622,6 +632,10 @@
             elements.buzzer.textContent = status.buzzer ? 'ON' : 'OFF';
             elements.buzzer.className = status.buzzer ? 'badge bg-warning' : 'badge bg-secondary';
             
+            // Update LCD status
+            elements.lcdStatus.textContent = 'ACTIVE';
+            elements.lcdStatus.className = 'badge bg-info';
+            
             // Update device info
             if (status.ip) elements.deviceIP.textContent = status.ip;
             if (status.connected !== undefined) {
@@ -634,6 +648,7 @@
                 const days = Math.floor(status.uptime / 86400);
                 const hours = Math.floor((status.uptime % 86400) / 3600);
                 elements.deviceUptime.textContent = `${days}d ${hours}h`;
+                elements.uptime.textContent = days;
             }
             
             // Update last update time
@@ -669,16 +684,31 @@
                 
                 if (lastFault.time) {
                     const faultTime = new Date(lastFault.time);
-                    const hoursAgo = Math.floor((now - faultTime) / (1000 * 60 * 60));
+                    const timeDiff = now - faultTime;
+                    const minutesAgo = Math.floor(timeDiff / (1000 * 60));
+                    const hoursAgo = Math.floor(timeDiff / (1000 * 60 * 60));
+                    const daysAgo = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
                     
-                    if (hoursAgo < 1) {
-                        elements.lastFault.textContent = `${Math.floor(hoursAgo * 60)}m ago`;
+                    if (minutesAgo < 60) {
+                        elements.lastFaultAgo.textContent = `${minutesAgo}m ago`;
                     } else if (hoursAgo < 24) {
-                        elements.lastFault.textContent = `${hoursAgo}h ago`;
+                        elements.lastFaultAgo.textContent = `${hoursAgo}h ago`;
                     } else {
-                        elements.lastFault.textContent = `${Math.floor(hoursAgo/24)}d ago`;
+                        elements.lastFaultAgo.textContent = `${daysAgo}d ago`;
                     }
                 }
+            } else {
+                // No faults yet
+                elements.lastFaultAgo.textContent = '-';
+            }
+            
+            // Store for comparison
+            if (faults.length > 0) {
+                systemState.lastFault = faults.sort((a, b) => {
+                    const timeA = a.time || '0000-00-00 00:00:00';
+                    const timeB = b.time || '0000-00-00 00:00:00';
+                    return new Date(timeB) - new Date(timeA);
+                })[0];
             }
         }
 
@@ -760,13 +790,6 @@
                     }
                 }
             }, 1000);
-            
-            // Simulate uptime update
-            setInterval(() => {
-                if (elements.deviceUptime.textContent === '0 days') {
-                    elements.uptime.textContent = '0';
-                }
-            }, 60000);
         }
 
         window.addEventListener('DOMContentLoaded', init);
