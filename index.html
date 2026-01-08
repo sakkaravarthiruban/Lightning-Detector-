@@ -6,110 +6,327 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-:root{
-  --bg:#f8fafc;
-  --card:#ffffff;
-  --line:#e2e8f0;
-  --primary:#2563eb;
-  --danger:#dc2626;
-  --success:#16a34a;
-  --text:#0f172a;
-  --muted:#64748b;
+:root {
+  --bg: #0f172a;
+  --card-bg: #1e293b;
+  --card-bg-light: #334155;
+  --line: #475569;
+  --primary: #60a5fa;
+  --primary-dark: #3b82f6;
+  --danger: #f87171;
+  --danger-dark: #ef4444;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --shadow: rgba(0, 0, 0, 0.3);
 }
 
-body{
-  margin:0;
-  font-family: "Segoe UI", Arial, sans-serif;
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 20%),
+    radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.1) 0%, transparent 20%);
 }
 
-.container{
-  max-width:1200px;
-  margin:auto;
-  padding:30px;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
 }
 
-h1{
-  text-align:center;
-  color:var(--primary);
-  margin-bottom:35px;
-  font-weight:600;
+/* ===== HEADER ===== */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid var(--line);
 }
 
-.card{
-  background:var(--card);
-  border-radius:14px;
-  padding:25px;
-  border:1px solid var(--line);
-  box-shadow:0 8px 20px rgba(0,0,0,0.05);
-  margin-bottom:30px;
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
 }
 
-/* ===== STAT ===== */
-.stat{
-  text-align:center;
+.subtitle {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 20px;
 }
 
-.stat h2{
-  margin-bottom:10px;
-  color:var(--muted);
-  font-weight:500;
+/* ===== STATS GRID ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
 }
 
-.count{
-  font-size:56px;
-  font-weight:700;
-  color:var(--danger);
+/* ===== STAT CARD ===== */
+.stat-card {
+  background: linear-gradient(145deg, var(--card-bg), var(--card-bg-light));
+  border-radius: 20px;
+  padding: 30px;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 30px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-/* ===== TABLE ===== */
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:15px;
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
 }
 
-thead{
-  background:#f1f5f9;
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--danger), var(--primary));
 }
 
-th{
-  padding:14px;
-  font-weight:600;
-  color:#334155;
-  border-bottom:2px solid var(--line);
+.stat-card h2 {
+  margin: 0 0 15px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-td{
-  padding:14px;
-  border-bottom:1px solid var(--line);
-  text-align:center;
-  color:#334155;
+.count {
+  font-size: 4rem;
+  font-weight: 800;
+  color: var(--danger);
+  line-height: 1;
+  margin: 10px 0;
+  text-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
 }
 
-tbody tr:hover{
-  background:#f8fafc;
+.stat-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stat-label svg {
+  width: 24px;
+  height: 24px;
+  color: var(--danger);
+}
+
+/* ===== TABLE CARD ===== */
+.table-card {
+  background: linear-gradient(145deg, var(--card-bg), var(--card-bg-light));
+  border-radius: 20px;
+  padding: 30px;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 30px var(--shadow);
+  overflow: hidden;
+}
+
+.table-card h2 {
+  margin: 0 0 25px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+thead {
+  background: linear-gradient(90deg, var(--card-bg-light), var(--line));
+}
+
+th {
+  padding: 18px 20px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  border-bottom: 2px solid var(--line);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+td {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text-muted);
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* ===== STATUS BADGE ===== */
-.badge{
-  padding:6px 14px;
-  border-radius:20px;
-  font-size:14px;
-  font-weight:600;
+.badge {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 100px;
+  justify-content: center;
 }
 
-.badge-danger{
-  background:#fee2e2;
-  color:#991b1b;
+.badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
-footer{
-  text-align:center;
-  margin-top:40px;
-  color:var(--muted);
-  font-size:14px;
+.badge-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-danger::before {
+  background: var(--danger);
+  box-shadow: 0 0 8px var(--danger);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center;
+  margin-top: 50px;
+  padding-top: 25px;
+  border-top: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 15px;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .count {
+    font-size: 3rem;
+  }
+  
+  .stat-card,
+  .table-card {
+    padding: 20px;
+  }
+  
+  th, td {
+    padding: 14px 16px;
+  }
+}
+
+/* ===== LOADING STATE ===== */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--card-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 </style>
 </head>
@@ -118,32 +335,78 @@ footer{
 
 <div class="container">
 
-  <h1>⚡ High Voltage Safety Monitoring System</h1>
+  <div class="header">
+    <h1>⚡ High Voltage Safety Monitoring</h1>
+    <div class="subtitle">Real-time fault detection and protection system dashboard</div>
+  </div>
 
-  <!-- ===== TOTAL FAULT COUNT ===== -->
-  <div class="card stat">
-    <h2>Total Fault Count</h2>
-    <div class="count" id="faultCount">0</div>
+  <!-- ===== STATS GRID ===== -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M12 2.25a.75.75 0 01.75.75v9a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.166 5.106a.75.75 0 010 1.06 8.25 8.25 0 1011.668 0 .75.75 0 111.06-1.06c3.808 3.807 3.808 9.98 0 13.788-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788a.75.75 0 011.06 0z" clip-rule="evenodd" />
+        </svg>
+        <h2>Total Fault Count</h2>
+      </div>
+      <div class="count pulse" id="faultCount">0</div>
+      <div class="stat-info">Real-time monitoring of safety incidents</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+        </svg>
+        <h2>System Status</h2>
+      </div>
+      <div class="count" style="color: var(--success); font-size: 2.5rem; margin-top: 20px;">ACTIVE</div>
+      <div class="stat-info">Monitoring 24/7 with ESP32 & Firebase</div>
+    </div>
   </div>
 
   <!-- ===== FAULT LOG TABLE ===== -->
-  <div class="card">
-    <h2>Fault Log History</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Time</th>
-          <th>Reason</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="faultTable"></tbody>
-    </table>
+  <div class="table-card">
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" d="M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+      </svg>
+      Fault Log History
+    </h2>
+    
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Timestamp</th>
+            <th>Fault Reason</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="faultTable">
+          <!-- Data will be populated here -->
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <svg xmlns="http://www.w3.org/2000/svg" class="loading-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+              </svg>
+              <div>Loading fault data...</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <footer>
-    ESP32-Based HV Protection System • Firebase Realtime Dashboard
+    <div class="footer-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+        <path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 00-1.071-.136 9.742 9.742 0 00-3.539 6.177A7.547 7.547 0 016.648 6.61a.75.75 0 00-1.152-.082A9 9 0 1015.68 4.534a7.46 7.46 0 01-2.717-2.248zM15.75 14.25a3.75 3.75 0 11-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 011.925-3.545 3.75 3.75 0 013.255 3.717z" clip-rule="evenodd" />
+      </svg>
+      ESP32-Based HV Protection System
+    </div>
+    <div>Real-time Firebase Monitoring Dashboard • Last Updated: <span id="lastUpdate">--:--:--</span></div>
   </footer>
 
 </div>
@@ -160,30 +423,98 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Update timestamp
+function updateTimestamp() {
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent = 
+    now.toLocaleTimeString('en-US', { 
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+}
+
+// Update timestamp every second
+setInterval(updateTimestamp, 1000);
+updateTimestamp();
+
 /* ===== TOTAL FAULT COUNT ===== */
-onValue(ref(db,"FaultLogs/totalFaults"), snap=>{
-  document.getElementById("faultCount").innerText =
-    snap.exists() ? snap.val() : 0;
+onValue(ref(db, "FaultLogs/totalFaults"), snap => {
+  const countElement = document.getElementById('faultCount');
+  const newValue = snap.exists() ? snap.val() : 0;
+  
+  // Add animation for count changes
+  if (parseInt(countElement.textContent) !== newValue) {
+    countElement.style.animation = 'none';
+    setTimeout(() => {
+      countElement.style.animation = 'pulse 0.5s ease';
+    }, 10);
+  }
+  
+  countElement.textContent = newValue;
 });
 
 /* ===== FAULT LOGS ===== */
-onValue(ref(db,"FaultLogs"), snap=>{
-  const table = document.getElementById("faultTable");
-  table.innerHTML="";
-  let i=1;
-
-  snap.forEach(child=>{
-    if(child.key.startsWith("fault_")){
-      const d = child.val();
-      table.innerHTML += `
-        <tr>
-          <td>${i++}</td>
-          <td>${d.time}</td>
-          <td>${d.reason}</td>
-          <td><span class="badge badge-danger">${d.status}</span></td>
-        </tr>`;
+onValue(ref(db, "FaultLogs"), snap => {
+  const table = document.getElementById('faultTable');
+  const logs = [];
+  
+  snap.forEach(child => {
+    if (child.key.startsWith('fault_')) {
+      const data = child.val();
+      logs.push({
+        key: child.key,
+        time: data.time || '--:--:--',
+        reason: data.reason || 'Unknown',
+        status: data.status || 'Active'
+      });
     }
   });
+  
+  // Sort logs by key (assuming fault_1, fault_2, etc.)
+  logs.sort((a, b) => {
+    const numA = parseInt(a.key.replace('fault_', ''));
+    const numB = parseInt(b.key.replace('fault_', ''));
+    return numB - numA; // Newest first
+  });
+  
+  // Update table
+  if (logs.length === 0) {
+    table.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">
+          No fault logs found
+        </td>
+      </tr>
+    `;
+  } else {
+    let html = '';
+    logs.forEach((log, index) => {
+      html += `
+        <tr style="animation: slideIn 0.3s ease ${index * 0.05}s both;">
+          <td>${index + 1}</td>
+          <td style="font-family: 'Monaco', 'Consolas', monospace;">${log.time}</td>
+          <td style="color: var(--text);">${log.reason}</td>
+          <td><span class="badge badge-danger">${log.status}</span></td>
+        </tr>
+      `;
+    });
+    table.innerHTML = html;
+  }
+});
+
+// Handle connection status
+const connectedRef = ref(db, ".info/connected");
+onValue(connectedRef, (snap) => {
+  const statusElement = document.querySelector('.count[style*="color: var(--success)"]');
+  if (snap.val() === true) {
+    statusElement.textContent = "CONNECTED";
+    statusElement.style.color = "var(--success)";
+  } else {
+    statusElement.textContent = "OFFLINE";
+    statusElement.style.color = "var(--danger)";
+  }
 });
 </script>
 
