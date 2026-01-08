@@ -1,798 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Detection System Monitor</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <style>
-        :root {
-            --normal-color: #198754;
-            --fault-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #0dcaf0;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border: none;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.95);
-        }
-        
-        .card-header {
-            border-radius: 15px 15px 0 0 !important;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        .status-normal {
-            color: var(--normal-color);
-            border-left: 5px solid var(--normal-color);
-        }
-        
-        .status-fault {
-            color: var(--fault-color);
-            border-left: 5px solid var(--fault-color);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { background-color: rgba(220, 53, 69, 0.1); }
-            50% { background-color: rgba(220, 53, 69, 0.3); }
-            100% { background-color: rgba(220, 53, 69, 0.1); }
-        }
-        
-        .status-warning {
-            color: var(--warning-color);
-            border-left: 5px solid var(--warning-color);
-        }
-        
-        .status-indicator {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        
-        .indicator-normal { background-color: var(--normal-color); }
-        .indicator-fault { background-color: var(--fault-color); }
-        .indicator-warning { background-color: var(--warning-color); }
-        
-        .stat-card {
-            text-align: center;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .stat-card .number {
-            font-size: 2.2rem;
-            font-weight: bold;
-            line-height: 1;
-        }
-        
-        .stat-card .label {
-            font-size: 0.85rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 8px;
-        }
-        
-        .log-entry {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            transition: background-color 0.3s;
-        }
-        
-        .log-entry:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .log-entry.new {
-            background-color: rgba(255, 193, 7, 0.1);
-        }
-        
-        .chart-container {
-            height: 300px;
-            position: relative;
-        }
-        
-        .device-info {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .device-info h5 {
-            color: white;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .info-item {
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-        
-        .info-label {
-            font-weight: 600;
-            display: inline-block;
-            width: 120px;
-        }
-        
-        .last-fault-info {
-            font-size: 0.8rem;
-            color: #888;
-            display: block;
-            margin-top: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>HV Safety Monitoring Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0f172a;
+      color: #ffffff;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #38bdf8;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: #020617;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(56,189,248,0.5);
+      margin-bottom: 30px;
+    }
+
+    .count {
+      font-size: 50px;
+      color: #ef4444;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #334155;
+      text-align: center;
+    }
+
+    th {
+      background: #1e293b;
+    }
+
+    tr:nth-child(even) {
+      background: #020617;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h1 class="display-4 mb-2">⚡ Lightning Detection System</h1>
-                        <p class="lead mb-0">Real-time monitoring of high voltage safety system</p>
-                        <div class="mt-3">
-                            <span class="badge bg-primary me-2"><i class="bi bi-wifi"></i> ESP32</span>
-                            <span class="badge bg-success me-2"><i class="bi bi-shield-check"></i> Safety System</span>
-                            <span class="badge bg-info"><i class="bi bi-cloud"></i> Firebase Realtime</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Main Dashboard -->
-        <div class="row">
-            <!-- System Status & Device Info -->
-            <div class="col-lg-4 col-md-6">
-                <!-- System Status -->
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <i class="bi bi-speedometer2 me-2"></i>System Status
-                    </div>
-                    <div class="card-body" id="systemStatus">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="h5 mb-0">Relay Status</span>
-                            <span class="badge bg-success" id="relayStatus">CLOSED</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="h5 mb-0">HV Detection</span>
-                            <span class="badge bg-success" id="hvStatus">NORMAL</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="h5 mb-0">System State</span>
-                            <span class="badge bg-success" id="systemState">OPERATIONAL</span>
-                        </div>
-                        <hr>
-                        <div class="text-center">
-                            <i class="bi bi-clock-history me-1"></i>
-                            <span id="lastUpdate">Updating...</span>
-                        </div>
-                    </div>
-                </div>
+  <div class="container">
+    <h1>⚡ High Voltage Safety System</h1>
 
-                <!-- Device Information -->
-                <div class="card mt-3">
-                    <div class="card-header bg-dark text-white">
-                        <i class="bi bi-cpu me-2"></i>Device Information
-                    </div>
-                    <div class="card-body">
-                        <div class="device-info">
-                            <h5><i class="bi bi-motherboard me-2"></i>ESP32 Device</h5>
-                            <div class="info-item">
-                                <span class="info-label">IP Address:</span>
-                                <span id="deviceIP">192.168.1.100</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Uptime:</span>
-                                <span id="deviceUptime">0 days</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">WiFi Status:</span>
-                                <span class="badge bg-success" id="wifiStatus">Connected</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Firebase:</span>
-                                <span class="badge bg-success" id="firebaseStatus">Connected</span>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-3">
-                            <h6><i class="bi bi-diagram-3 me-2"></i>System Components</h6>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-lightning-charge text-warning me-2"></i>HV Sensor</span>
-                                    <span class="badge bg-primary">Pin 27</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-toggle-on text-success me-2"></i>Safety Relay</span>
-                                    <span class="badge bg-primary">Pin 25</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-display text-info me-2"></i>LCD Display</span>
-                                    <span class="badge bg-primary">I2C 0x27</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Statistics & LED Status -->
-            <div class="col-lg-4 col-md-6">
-                <!-- Statistics -->
-                <div class="card">
-                    <div class="card-header bg-info text-white">
-                        <i class="bi bi-graph-up me-2"></i>Statistics
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="stat-card bg-light">
-                                    <div class="number text-primary" id="totalFaults">0</div>
-                                    <div class="label">Total Faults</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="stat-card bg-light">
-                                    <div class="number text-success" id="uptime">0</div>
-                                    <div class="label">Days Uptime</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="stat-card bg-light">
-                                    <div class="number text-warning" id="monthFaults">0</div>
-                                    <div class="label">This Month</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <!-- Corrected Last Fault Section -->
-                                <div class="stat-card bg-light">
-                                    <div class="number text-danger" id="lastFaultAgo">-</div>
-                                    <div class="label">LAST FAULT</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-4">
-                            <h6>System Health</h6>
-                            <div class="progress" style="height: 25px;">
-                                <div id="healthBar" class="progress-bar bg-success" 
-                                     role="progressbar" style="width: 100%">100%</div>
-                            </div>
-                            <small class="text-muted mt-2 d-block">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Health based on fault frequency and system stability
-                            </small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LED Status -->
-                <div class="card mt-3">
-                    <div class="card-header bg-success text-white">
-                        <i class="bi bi-lightbulb me-2"></i>Visual Indicators
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="status-indicator indicator-normal me-2"></div>
-                                    <div>
-                                        <div class="fw-bold">Green LED</div>
-                                        <div class="text-muted small">Normal Status</div>
-                                    </div>
-                                    <div class="ms-auto">
-                                        <span class="badge bg-success" id="greenLed">ON</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="status-indicator indicator-fault me-2"></div>
-                                    <div>
-                                        <div class="fw-bold">Red LED</div>
-                                        <div class="text-muted small">Fault Status</div>
-                                    </div>
-                                    <div class="ms-auto">
-                                        <span class="badge bg-secondary" id="redLed">OFF</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="d-flex align-items-center">
-                                    <div class="status-indicator indicator-warning me-2"></div>
-                                    <div>
-                                        <div class="fw-bold">Buzzer</div>
-                                        <div class="text-muted small">Audible Alarm</div>
-                                    </div>
-                                    <div class="ms-auto">
-                                        <span class="badge bg-secondary" id="buzzer">OFF</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="d-flex align-items-center">
-                                    <div class="status-indicator indicator-info me-2"></div>
-                                    <div>
-                                        <div class="fw-bold">LCD Display</div>
-                                        <div class="text-muted small">Status Messages</div>
-                                    </div>
-                                    <div class="ms-auto">
-                                        <span class="badge bg-info" id="lcdStatus">ACTIVE</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="alert alert-light mt-3">
-                            <small>
-                                <i class="bi bi-lightning-charge text-warning me-1"></i>
-                                <strong>Note:</strong> During normal operation, Green LED is ON and Relay is CLOSED. 
-                                During faults, Red LED and Buzzer activate, and Relay trips.
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Fault Logs -->
-            <div class="col-lg-4">
-                <div class="card h-100">
-                    <div class="card-header bg-danger text-white">
-                        <i class="bi bi-exclamation-triangle me-2"></i>Recent Fault Logs
-                    </div>
-                    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                        <div id="faultLogs">
-                            <div class="text-center text-muted py-4">
-                                <i class="bi bi-exclamation-circle display-6 d-block mb-2"></i>
-                                <span>No faults detected yet</span>
-                                <p class="small mt-2">System operating normally</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-light">
-                        <small class="text-muted">
-                            <i class="bi bi-info-circle me-1"></i>
-                            Showing latest 10 faults. Auto-refreshes every 5 seconds.
-                        </small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Additional Information -->
-        <div class="row mt-4">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header bg-secondary text-white">
-                        <i class="bi bi-info-circle me-2"></i>System Information
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6><i class="bi bi-shield-check me-2"></i>Safety Features</h6>
-                                <ul class="list-unstyled">
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Automatic fault detection</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Instant relay tripping</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Visual & audible alarms</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Auto-restore after 2 seconds</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Real-time remote monitoring</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <h6><i class="bi bi-cloud-upload me-2"></i>Data Logging</h6>
-                                <ul class="list-unstyled">
-                                    <li><i class="bi bi-database me-2"></i>Firebase Realtime Database</li>
-                                    <li><i class="bi bi-clock-history me-2"></i>NTP time synchronization</li>
-                                    <li><i class="bi bi-calendar-check me-2"></i>Daily/monthly statistics</li>
-                                    <li><i class="bi bi-graph-up me-2"></i>Real-time status updates</li>
-                                    <li><i class="bi bi-exclamation-triangle me-2"></i>Fault history tracking</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-header bg-warning text-dark">
-                        <i class="bi bi-activity me-2"></i>Live Activity
-                    </div>
-                    <div class="card-body">
-                        <div id="activityLog" style="max-height: 200px; overflow-y: auto;">
-                            <div class="alert alert-info mb-2 py-2">
-                                <small><i class="bi bi-check-circle me-1"></i> System connected to Firebase</small>
-                            </div>
-                            <div class="alert alert-success mb-2 py-2">
-                                <small><i class="bi bi-wifi me-1"></i> WiFi connection established</small>
-                            </div>
-                            <div class="alert alert-light mb-2 py-2">
-                                <small><i class="bi bi-clock me-1"></i> NTP time synchronized</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <p class="mb-0 text-muted">
-                            <i class="bi bi-c-circle"></i> Lightning Detection System v2.0 | 
-                            <i class="bi bi-wifi ms-3"></i> ESP32 + Firebase | 
-                            <i class="bi bi-shield-check ms-3"></i> High Voltage Safety Monitor
-                        </p>
-                        <small class="text-muted">Last updated: <span id="pageUpdateTime">--:--:--</span></small>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="card">
+      <h2>Total Fault Count</h2>
+      <div class="count" id="faultCount">0</div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="card">
+      <h2>Fault Log History</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Time</th>
+            <th>Reason</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="faultTable"></tbody>
+      </table>
+    </div>
 
-    <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            databaseURL: "https://lightning-detection-aaa-default-rtdb.asia-southeast1.firebasedatabase.app/",
-            apiKey: "AIzaSyCwN8vXy3XqgR9v8J7Qz7wv6yLmNpQrT9uI",
-            authDomain: "lightning-detection-aaa.firebaseapp.com",
-            projectId: "lightning-detection-aaa",
-            storageBucket: "lightning-detection-aaa.appspot.com",
-            messagingSenderId: "123456789012",
-            appId: "1:123456789012:web:abcdef123456"
-        };
+    <footer>
+      ESP32 HV Safety System | Firebase Realtime Monitoring
+    </footer>
+  </div>
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
-        // Application State
-        let systemState = {
-            relay: true,
-            faultCount: 0,
-            lastFault: null,
-            isConnected: false,
-            lastUpdateTime: null
-        };
+    const firebaseConfig = {
+      databaseURL: "https://lightning-detection-aaa-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
 
-        // DOM Elements
-        const elements = {
-            relayStatus: document.getElementById('relayStatus'),
-            hvStatus: document.getElementById('hvStatus'),
-            systemState: document.getElementById('systemState'),
-            lastUpdate: document.getElementById('lastUpdate'),
-            totalFaults: document.getElementById('totalFaults'),
-            monthFaults: document.getElementById('monthFaults'),
-            lastFaultAgo: document.getElementById('lastFaultAgo'),
-            greenLed: document.getElementById('greenLed'),
-            redLed: document.getElementById('redLed'),
-            buzzer: document.getElementById('buzzer'),
-            faultLogs: document.getElementById('faultLogs'),
-            healthBar: document.getElementById('healthBar'),
-            deviceIP: document.getElementById('deviceIP'),
-            deviceUptime: document.getElementById('deviceUptime'),
-            wifiStatus: document.getElementById('wifiStatus'),
-            firebaseStatus: document.getElementById('firebaseStatus'),
-            lcdStatus: document.getElementById('lcdStatus'),
-            pageUpdateTime: document.getElementById('pageUpdateTime'),
-            activityLog: document.getElementById('activityLog')
-        };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-        // Firebase Listeners
-        function setupFirebaseListeners() {
-            // Listen for total faults
-            database.ref('/FaultLogs/totalFaults').on('value', (snapshot) => {
-                const count = snapshot.val() || 0;
-                systemState.faultCount = count;
-                elements.totalFaults.textContent = count;
-                updateHealthBar();
-            });
+    const totalFaultRef = ref(db, "FaultLogs/totalFaults");
+    const faultLogsRef = ref(db, "FaultLogs");
 
-            // Listen for fault logs
-            database.ref('/FaultLogs').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    updateFaultLogs(data);
-                    updateStatistics(data);
-                }
-            });
+    onValue(totalFaultRef, (snapshot) => {
+      document.getElementById("faultCount").innerText =
+        snapshot.exists() ? snapshot.val() : 0;
+    });
 
-            // Listen for system status
-            database.ref('/SystemStatus').on('value', (snapshot) => {
-                const status = snapshot.val();
-                if (status) {
-                    updateSystemStatus(status);
-                    addActivityLog('System status updated', 'info');
-                }
-            });
+    onValue(faultLogsRef, (snapshot) => {
+      const table = document.getElementById("faultTable");
+      table.innerHTML = "";
+      let i = 1;
 
-            // Listen for connection status
-            database.ref('.info/connected').on('value', (snapshot) => {
-                const connected = snapshot.val();
-                elements.firebaseStatus.textContent = connected ? 'Connected' : 'Disconnected';
-                elements.firebaseStatus.className = connected ? 'badge bg-success' : 'badge bg-danger';
-                
-                if (connected) {
-                    addActivityLog('Connected to Firebase', 'success');
-                } else {
-                    addActivityLog('Disconnected from Firebase', 'danger');
-                }
-            });
+      snapshot.forEach((child) => {
+        if (child.key.startsWith("fault_")) {
+          const d = child.val();
+          table.innerHTML += `
+            <tr>
+              <td>${i++}</td>
+              <td>${d.time}</td>
+              <td>${d.reason}</td>
+              <td>${d.status}</td>
+            </tr>`;
         }
+      });
+    });
+  </script>
 
-        // Update Fault Logs Display
-        function updateFaultLogs(data) {
-            const logs = Object.keys(data)
-                .filter(key => key.startsWith('fault_'))
-                .map(key => data[key])
-                .sort((a, b) => {
-                    const timeA = a.time || '0000-00-00 00:00:00';
-                    const timeB = b.time || '0000-00-00 00:00:00';
-                    return timeB.localeCompare(timeA);
-                })
-                .slice(0, 10);
-
-            if (logs.length === 0) {
-                elements.faultLogs.innerHTML = `
-                    <div class="text-center text-muted py-4">
-                        <i class="bi bi-exclamation-circle display-6 d-block mb-2"></i>
-                        <span>No faults detected yet</span>
-                        <p class="small mt-2">System operating normally</p>
-                    </div>
-                `;
-                return;
-            }
-
-            elements.faultLogs.innerHTML = logs.map((log, index) => {
-                const isNew = index === 0 && (!systemState.lastFault || log.time !== systemState.lastFault.time);
-                const faultTime = log.time || 'Unknown time';
-                const faultDate = faultTime.substring(0, 10);
-                const faultClock = faultTime.substring(11);
-                
-                return `
-                    <div class="log-entry ${isNew ? 'new' : ''}">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <strong><i class="bi bi-lightning-charge text-warning me-1"></i>${log.reason || 'High Voltage Pulse'}</strong><br>
-                                <small class="text-muted">${faultDate} • ${faultClock}</small>
-                            </div>
-                            <span class="badge bg-danger">${log.status || 'Tripped'}</span>
-                        </div>
-                        ${log.manualReset ? '<small class="text-warning"><i class="bi bi-gear me-1"></i>Manual reset</small>' : ''}
-                    </div>
-                `;
-            }).join('');
-            
-            if (logs.length > 0) {
-                systemState.lastFault = logs[0];
-            }
-        }
-
-        // Update System Status
-        function updateSystemStatus(status) {
-            // Update relay status
-            const relayActive = status.relay !== false;
-            systemState.relay = relayActive;
-            
-            elements.relayStatus.textContent = relayActive ? 'CLOSED' : 'TRIPPED';
-            elements.relayStatus.className = relayActive ? 'badge bg-success' : 'badge bg-danger';
-            
-            // Update HV status
-            const hvNormal = status.hvStatus !== 'FAULT';
-            elements.hvStatus.textContent = hvNormal ? 'NORMAL' : 'FAULT';
-            elements.hvStatus.className = hvNormal ? 'badge bg-success' : 'badge bg-danger';
-            
-            // Update system state
-            if (!relayActive) {
-                elements.systemState.textContent = 'TRIPPED';
-                elements.systemState.className = 'badge bg-danger';
-            } else if (!hvNormal) {
-                elements.systemState.textContent = 'WARNING';
-                elements.systemState.className = 'badge bg-warning';
-            } else {
-                elements.systemState.textContent = 'OPERATIONAL';
-                elements.systemState.className = 'badge bg-success';
-            }
-            
-            // Update LED indicators
-            elements.greenLed.textContent = status.greenLed ? 'ON' : 'OFF';
-            elements.greenLed.className = status.greenLed ? 'badge bg-success' : 'badge bg-secondary';
-            
-            elements.redLed.textContent = status.redLed ? 'ON' : 'OFF';
-            elements.redLed.className = status.redLed ? 'badge bg-danger' : 'badge bg-secondary';
-            
-            elements.buzzer.textContent = status.buzzer ? 'ON' : 'OFF';
-            elements.buzzer.className = status.buzzer ? 'badge bg-warning' : 'badge bg-secondary';
-            
-            // Update LCD status
-            elements.lcdStatus.textContent = 'ACTIVE';
-            elements.lcdStatus.className = 'badge bg-info';
-            
-            // Update device info
-            if (status.ip) elements.deviceIP.textContent = status.ip;
-            if (status.connected !== undefined) {
-                elements.wifiStatus.textContent = status.connected ? 'Connected' : 'Disconnected';
-                elements.wifiStatus.className = status.connected ? 'badge bg-success' : 'badge bg-danger';
-            }
-            
-            // Update uptime
-            if (status.uptime) {
-                const days = Math.floor(status.uptime / 86400);
-                const hours = Math.floor((status.uptime % 86400) / 3600);
-                elements.deviceUptime.textContent = `${days}d ${hours}h`;
-                elements.uptime.textContent = days;
-            }
-            
-            // Update last update time
-            const now = new Date();
-            elements.lastUpdate.textContent = now.toLocaleTimeString();
-            systemState.lastUpdateTime = now;
-        }
-
-        // Update Statistics
-        function updateStatistics(data) {
-            const faults = Object.keys(data)
-                .filter(key => key.startsWith('fault_'))
-                .map(key => data[key]);
-            
-            // Count this month's faults
-            const now = new Date();
-            const monthFaults = faults.filter(fault => {
-                if (!fault.time) return false;
-                const faultDate = new Date(fault.time);
-                return faultDate.getMonth() === now.getMonth() && 
-                       faultDate.getFullYear() === now.getFullYear();
-            }).length;
-            
-            elements.monthFaults.textContent = monthFaults;
-            
-            // Update last fault time
-            if (faults.length > 0) {
-                const lastFault = faults.sort((a, b) => {
-                    const timeA = a.time || '0000-00-00 00:00:00';
-                    const timeB = b.time || '0000-00-00 00:00:00';
-                    return new Date(timeB) - new Date(timeA);
-                })[0];
-                
-                if (lastFault.time) {
-                    const faultTime = new Date(lastFault.time);
-                    const timeDiff = now - faultTime;
-                    const minutesAgo = Math.floor(timeDiff / (1000 * 60));
-                    const hoursAgo = Math.floor(timeDiff / (1000 * 60 * 60));
-                    const daysAgo = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-                    
-                    if (minutesAgo < 60) {
-                        elements.lastFaultAgo.textContent = `${minutesAgo}m ago`;
-                    } else if (hoursAgo < 24) {
-                        elements.lastFaultAgo.textContent = `${hoursAgo}h ago`;
-                    } else {
-                        elements.lastFaultAgo.textContent = `${daysAgo}d ago`;
-                    }
-                }
-            } else {
-                // No faults yet
-                elements.lastFaultAgo.textContent = '-';
-            }
-            
-            // Store for comparison
-            if (faults.length > 0) {
-                systemState.lastFault = faults.sort((a, b) => {
-                    const timeA = a.time || '0000-00-00 00:00:00';
-                    const timeB = b.time || '0000-00-00 00:00:00';
-                    return new Date(timeB) - new Date(timeA);
-                })[0];
-            }
-        }
-
-        // Update Health Bar
-        function updateHealthBar() {
-            // Simple health calculation based on fault frequency
-            const health = systemState.faultCount === 0 ? 100 : 
-                          Math.max(0, 100 - (systemState.faultCount * 2));
-            
-            elements.healthBar.style.width = `${health}%`;
-            elements.healthBar.textContent = `${health}%`;
-            
-            if (health >= 80) {
-                elements.healthBar.className = 'progress-bar bg-success';
-            } else if (health >= 50) {
-                elements.healthBar.className = 'progress-bar bg-warning';
-            } else {
-                elements.healthBar.className = 'progress-bar bg-danger';
-            }
-        }
-
-        // Add Activity Log
-        function addActivityLog(message, type = 'info') {
-            const alertClass = {
-                'info': 'alert-info',
-                'warning': 'alert-warning',
-                'danger': 'alert-danger',
-                'success': 'alert-success'
-            }[type] || 'alert-info';
-            
-            const icon = {
-                'info': 'info-circle',
-                'warning': 'exclamation-triangle',
-                'danger': 'exclamation-circle',
-                'success': 'check-circle'
-            }[type] || 'info-circle';
-            
-            const activityItem = document.createElement('div');
-            activityItem.className = `alert ${alertClass} mb-2 py-2`;
-            activityItem.innerHTML = `
-                <small><i class="bi bi-${icon} me-1"></i> ${message}</small>
-            `;
-            
-            elements.activityLog.insertBefore(activityItem, elements.activityLog.firstChild);
-            
-            // Keep only last 5 activity items
-            while (elements.activityLog.children.length > 5) {
-                elements.activityLog.removeChild(elements.activityLog.lastChild);
-            }
-            
-            // Auto-remove after 30 seconds
-            setTimeout(() => {
-                if (activityItem.parentNode) {
-                    activityItem.remove();
-                }
-            }, 30000);
-        }
-
-        // Initialize
-        function init() {
-            setupFirebaseListeners();
-            updateHealthBar();
-            
-            // Add initial activity logs
-            addActivityLog('Web app loaded', 'info');
-            addActivityLog('Monitoring system started', 'success');
-            
-            // Update page time every second
-            setInterval(() => {
-                const now = new Date();
-                elements.lastUpdate.textContent = now.toLocaleTimeString();
-                elements.pageUpdateTime.textContent = now.toLocaleTimeString();
-                
-                // Update uptime if systemState has lastUpdateTime
-                if (systemState.lastUpdateTime) {
-                    const timeDiff = Math.floor((now - systemState.lastUpdateTime) / 1000);
-                    if (timeDiff > 60) {
-                        addActivityLog(`No update for ${Math.floor(timeDiff/60)} minutes`, 'warning');
-                    }
-                }
-            }, 1000);
-        }
-
-        window.addEventListener('DOMContentLoaded', init);
-    </script>
 </body>
 </html>
