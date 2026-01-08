@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightning Detection System Monitor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --normal-color: #198754;
+            --fault-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #0dcaf0;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: none;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .card-header {
+            border-radius: 15px 15px 0 0 !important;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .status-normal {
+            color: var(--normal-color);
+            border-left: 5px solid var(--normal-color);
+        }
+        
+        .status-fault {
+            color: var(--fault-color);
+            border-left: 5px solid var(--fault-color);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { background-color: rgba(220, 53, 69, 0.1); }
+            50% { background-color: rgba(220, 53, 69, 0.3); }
+            100% { background-color: rgba(220, 53, 69, 0.1); }
+        }
+        
+        .status-warning {
+            color: var(--warning-color);
+            border-left: 5px solid var(--warning-color);
+        }
+        
+        .status-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .indicator-normal { background-color: var(--normal-color); }
+        .indicator-fault { background-color: var(--fault-color); }
+        .indicator-warning { background-color: var(--warning-color); }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .log-entry {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+        }
+        
+        .log-entry:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .log-entry.new {
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+        
+        .control-btn {
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h1 class="display-4 mb-2">⚡ Lightning Detection System</h1>
+                        <p class="lead mb-0">Real-time monitoring of high voltage safety system</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="row">
+            <!-- System Status -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-speedometer2 me-2"></i>System Status
+                    </div>
+                    <div class="card-body" id="systemStatus">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="h5 mb-0">Relay Status</span>
+                            <span class="badge bg-success" id="relayStatus">CLOSED</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="h5 mb-0">HV Detection</span>
+                            <span class="badge bg-success" id="hvStatus">NORMAL</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="h5 mb-0">System State</span>
+                            <span class="badge bg-success" id="systemState">OPERATIONAL</span>
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <i class="bi bi-clock-history me-1"></i>
+                            <span id="lastUpdate">Updating...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Device Controls -->
+                <div class="card mt-3">
+                    <div class="card-header bg-dark text-white">
+                        <i class="bi bi-gear me-2"></i>Device Controls
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <button class="btn btn-success control-btn w-100" id="relayOn">
+                                    <i class="bi bi-power me-2"></i>Relay ON
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-danger control-btn w-100" id="relayOff">
+                                    <i class="bi bi-power me-2"></i>Relay OFF
+                                </button>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <button class="btn btn-warning control-btn w-100" id="testFault">
+                                    <i class="bi bi-lightning-charge me-2"></i>Test Fault
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <i class="bi bi-graph-up me-2"></i>Statistics
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="stat-card bg-light">
+                                    <div class="number text-primary" id="totalFaults">0</div>
+                                    <div class="label">Total Faults</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card bg-light">
+                                    <div class="number text-success" id="uptime">0</div>
+                                    <div class="label">Days Uptime</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card bg-light">
+                                    <div class="number text-warning" id="monthFaults">0</div>
+                                    <div class="label">This Month</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card bg-light">
+                                    <div class="number text-danger" id="lastFault">-</div>
+                                    <div class="label">Last Fault</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h6>System Health</h6>
+                            <div class="progress" style="height: 25px;">
+                                <div id="healthBar" class="progress-bar bg-success" 
+                                     role="progressbar" style="width: 100%">100%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LED Status -->
+                <div class="card mt-3">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-lightbulb me-2"></i>LED Indicators
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="indicator-indicator indicator-normal me-2"></div>
+                                    <div>
+                                        <div class="fw-bold">Green LED</div>
+                                        <div class="text-muted small">Normal Status</div>
+                                    </div>
+                                    <div class="ms-auto">
+                                        <span class="badge bg-success" id="greenLed">ON</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="indicator-indicator indicator-fault me-2"></div>
+                                    <div>
+                                        <div class="fw-bold">Red LED</div>
+                                        <div class="text-muted small">Fault Status</div>
+                                    </div>
+                                    <div class="ms-auto">
+                                        <span class="badge bg-secondary" id="redLed">OFF</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <div class="indicator-indicator indicator-warning me-2"></div>
+                                    <div>
+                                        <div class="fw-bold">Buzzer</div>
+                                        <div class="text-muted small">Alarm</div>
+                                    </div>
+                                    <div class="ms-auto">
+                                        <span class="badge bg-secondary" id="buzzer">OFF</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fault Logs -->
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header bg-danger text-white">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Recent Fault Logs
+                    </div>
+                    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                        <div id="faultLogs">
+                            <div class="text-center text-muted py-4">
+                                <i class="bi bi-exclamation-circle display-6 d-block mb-2"></i>
+                                <span>No faults detected yet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Panel -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="bi bi-bell me-2"></i>Notifications
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="notifications">
+                            <div class="alert alert-info m-3">
+                                <i class="bi bi-info-circle me-2"></i>
+                                System connected and monitoring...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            databaseURL: "https://lightning-detection-aaa-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            apiKey: "AIzaSyCwN8vXy3XqgR9v8J7Qz7wv6yLmNpQrT9uI", // You'll need to add this to your Firebase project
+            authDomain: "lightning-detection-aaa.firebaseapp.com",
+            projectId: "lightning-detection-aaa",
+            storageBucket: "lightning-detection-aaa.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef123456"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Application State
+        let systemState = {
+            relay: true,
+            faultCount: 0,
+            lastFault: null,
+            isConnected: false
+        };
+
+        // DOM Elements
+        const elements = {
+            relayStatus: document.getElementById('relayStatus'),
+            hvStatus: document.getElementById('hvStatus'),
+            systemState: document.getElementById('systemState'),
+            lastUpdate: document.getElementById('lastUpdate'),
+            totalFaults: document.getElementById('totalFaults'),
+            monthFaults: document.getElementById('monthFaults'),
+            lastFault: document.getElementById('lastFault'),
+            greenLed: document.getElementById('greenLed'),
+            redLed: document.getElementById('redLed'),
+            buzzer: document.getElementById('buzzer'),
+            faultLogs: document.getElementById('faultLogs'),
+            notifications: document.getElementById('notifications'),
+            healthBar: document.getElementById('healthBar'),
+            relayOn: document.getElementById('relayOn'),
+            relayOff: document.getElementById('relayOff'),
+            testFault: document.getElementById('testFault')
+        };
+
+        // Initialize Chart
+        const ctx = document.createElement('canvas');
+        ctx.id = 'faultChart';
+        let faultChart;
+
+        // Firebase Listeners
+        function setupFirebaseListeners() {
+            // Listen for total faults
+            database.ref('/FaultLogs/totalFaults').on('value', (snapshot) => {
+                const count = snapshot.val() || 0;
+                systemState.faultCount = count;
+                elements.totalFaults.textContent = count;
+                updateHealthBar();
+            });
+
+            // Listen for fault logs
+            database.ref('/FaultLogs').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    updateFaultLogs(data);
+                    updateStatistics(data);
+                }
+            });
+
+            // Listen for system status
+            database.ref('/SystemStatus').on('value', (snapshot) => {
+                const status = snapshot.val();
+                if (status) {
+                    updateSystemStatus(status);
+                }
+            });
+        }
+
+        // Update Fault Logs Display
+        function updateFaultLogs(data) {
+            const logs = Object.keys(data)
+                .filter(key => key.startsWith('fault_'))
+                .map(key => data[key])
+                .sort((a, b) => new Date(b.time) - new Date(a.time))
+                .slice(0, 10);
+
+            if (logs.length === 0) {
+                elements.faultLogs.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-exclamation-circle display-6 d-block mb-2"></i>
+                        <span>No faults detected yet</span>
+                    </div>
+                `;
+                return;
+            }
+
+            elements.faultLogs.innerHTML = logs.map(log => `
+                <div class="log-entry">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>${log.reason || 'High Voltage Pulse'}</strong><br>
+                            <small class="text-muted">${log.time || 'Unknown time'}</small>
+                        </div>
+                        <span class="badge bg-danger">${log.status || 'Tripped'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update System Status
+        function updateSystemStatus(status) {
+            // Update relay status
+            const relayActive = status.relay !== false;
+            systemState.relay = relayActive;
+            
+            elements.relayStatus.textContent = relayActive ? 'CLOSED' : 'TRIPPED';
+            elements.relayStatus.className = relayActive ? 'badge bg-success' : 'badge bg-danger';
+            
+            // Update HV status
+            const hvNormal = status.hvStatus !== 'FAULT';
+            elements.hvStatus.textContent = hvNormal ? 'NORMAL' : 'FAULT';
+            elements.hvStatus.className = hvNormal ? 'badge bg-success' : 'badge bg-danger';
+            
+            // Update system state
+            if (!relayActive) {
+                elements.systemState.textContent = 'TRIPPED';
+                elements.systemState.className = 'badge bg-danger';
+            } else if (!hvNormal) {
+                elements.systemState.textContent = 'WARNING';
+                elements.systemState.className = 'badge bg-warning';
+            } else {
+                elements.systemState.textContent = 'OPERATIONAL';
+                elements.systemState.className = 'badge bg-success';
+            }
+            
+            // Update LED indicators
+            elements.greenLed.textContent = status.greenLed ? 'ON' : 'OFF';
+            elements.greenLed.className = status.greenLed ? 'badge bg-success' : 'badge bg-secondary';
+            
+            elements.redLed.textContent = status.redLed ? 'ON' : 'OFF';
+            elements.redLed.className = status.redLed ? 'badge bg-danger' : 'badge bg-secondary';
+            
+            elements.buzzer.textContent = status.buzzer ? 'ON' : 'OFF';
+            elements.buzzer.className = status.buzzer ? 'badge bg-warning' : 'badge bg-secondary';
+            
+            // Update last update time
+            elements.lastUpdate.textContent = new Date().toLocaleTimeString();
+        }
+
+        // Update Statistics
+        function updateStatistics(data) {
+            const faults = Object.keys(data)
+                .filter(key => key.startsWith('fault_'))
+                .map(key => data[key]);
+            
+            // Count this month's faults
+            const now = new Date();
+            const monthFaults = faults.filter(fault => {
+                if (!fault.time) return false;
+                const faultDate = new Date(fault.time);
+                return faultDate.getMonth() === now.getMonth() && 
+                       faultDate.getFullYear() === now.getFullYear();
+            }).length;
+            
+            elements.monthFaults.textContent = monthFaults;
+            
+            // Update last fault time
+            if (faults.length > 0) {
+                const lastFault = faults.sort((a, b) => 
+                    new Date(b.time) - new Date(a.time)
+                )[0];
+                
+                const faultTime = new Date(lastFault.time);
+                const hoursAgo = Math.floor((now - faultTime) / (1000 * 60 * 60));
+                
+                if (hoursAgo < 24) {
+                    elements.lastFault.textContent = `${hoursAgo}h ago`;
+                } else {
+                    elements.lastFault.textContent = `${Math.floor(hoursAgo/24)}d ago`;
+                }
+            }
+        }
+
+        // Update Health Bar
+        function updateHealthBar() {
+            // Simple health calculation based on fault frequency
+            const health = systemState.faultCount === 0 ? 100 : 
+                          Math.max(0, 100 - (systemState.faultCount * 2));
+            
+            elements.healthBar.style.width = `${health}%`;
+            elements.healthBar.textContent = `${health}%`;
+            
+            if (health >= 80) {
+                elements.healthBar.className = 'progress-bar bg-success';
+            } else if (health >= 50) {
+                elements.healthBar.className = 'progress-bar bg-warning';
+            } else {
+                elements.healthBar.className = 'progress-bar bg-danger';
+            }
+        }
+
+        // Add Notification
+        function addNotification(type, message) {
+            const alertClass = {
+                'info': 'alert-info',
+                'warning': 'alert-warning',
+                'danger': 'alert-danger',
+                'success': 'alert-success'
+            }[type] || 'alert-info';
+            
+            const notification = document.createElement('div');
+            notification.className = `alert ${alertClass} m-3`;
+            notification.innerHTML = `
+                <i class="bi bi-${type === 'warning' ? 'exclamation-triangle' : 
+                                  type === 'danger' ? 'exclamation-circle' : 
+                                  type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close float-end" data-bs-dismiss="alert"></button>
+            `;
+            
+            elements.notifications.insertBefore(notification, elements.notifications.firstChild);
+            
+            // Auto-remove after 10 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 10000);
+        }
+
+        // Control Functions
+        elements.relayOn.addEventListener('click', () => {
+            database.ref('/Control/relay').set(true);
+            addNotification('success', 'Relay command sent: ON');
+        });
+
+        elements.relayOff.addEventListener('click', () => {
+            database.ref('/Control/relay').set(false);
+            addNotification('warning', 'Relay command sent: OFF');
+        });
+
+        elements.testFault.addEventListener('click', () => {
+            database.ref('/Control/testFault').set(true);
+            setTimeout(() => database.ref('/Control/testFault').remove(), 1000);
+            addNotification('info', 'Test fault triggered');
+        });
+
+        // Initialize
+        function init() {
+            setupFirebaseListeners();
+            updateHealthBar();
+            
+            // Add initial notification
+            addNotification('info', 'Connected to Firebase database');
+            
+            // Update time every second
+            setInterval(() => {
+                const now = new Date();
+                elements.lastUpdate.textContent = now.toLocaleTimeString();
+            }, 1000);
+            
+            // Simulate uptime (in a real app, this would come from Firebase)
+            setInterval(() => {
+                const uptime = Math.floor((Date.now() - startTime) / (1000 * 60 * 60 * 24));
+                document.getElementById('uptime').textContent = uptime;
+            }, 60000);
+        }
+
+        const startTime = Date.now();
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
